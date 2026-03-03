@@ -3,7 +3,13 @@ function openLink(url) {
 }
 
 function showComments() {
-  document.getElementById("comments").style.display = "block";
+  const commentSection = document.querySelector(".comments-section");
+
+  if (commentSection.style.display === "block") {
+    commentSection.style.display = "none";
+  } else {
+    commentSection.style.display = "block";
+  }
 }
 
 function submitComment() {
@@ -106,4 +112,5 @@ document.querySelector(".instagram").onclick = () => {
 
 document.querySelector(".twitter").onclick = () => {
   window.open("https://twitter.com", "_blank");
+
 };
