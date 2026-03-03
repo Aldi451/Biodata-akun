@@ -41,20 +41,24 @@
 </div>
 
     
-    <div id="comments" class="comments-section">
-      <h3>Komentar Pengguna</h3>
-      
-      <!-- Input nama di pojok kiri atas -->
-      <div class="username-wrapper">
-        <input type="text" id="username" placeholder="Masukkan nama Anda">
-      </div>
-      
-      <!-- Textarea komentar -->
-      <textarea id="usercomment" placeholder="Tulis komentar..."></textarea>
-      
-      <button onclick="submitComment()">Kirim</button>
-      <ul id="comment-list"></ul>
-    </div>
+<div class="comments-section">
+  <h3>Komentar</h3>
+
+  <script src="https://giscus.app/client.js"
+        data-repo="USERNAME/REPO"
+        data-repo-id="ISI_OTOMATIS"
+        data-category="General"
+        data-category-id="ISI_OTOMATIS"
+        data-mapping="pathname"
+        data-strict="0"
+        data-reactions-enabled="1"
+        data-emit-metadata="0"
+        data-input-position="bottom"
+        data-theme="light"
+        crossorigin="anonymous"
+        async>
+  </script>
+</div>
   </div>
 
   <!-- Script di paling bawah -->
@@ -62,3 +66,4 @@
 </body>
 
 </html>
+
