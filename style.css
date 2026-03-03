@@ -1,0 +1,260 @@
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #4a90e2, #357ab7);
+  color: #fff;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.profile-container {
+  position: relative;
+  z-index: 2;
+  padding: 20px;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.profile-pic img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+}
+
+.name {
+  margin: 10px 0;
+  font-size: 20px;
+}
+
+.buttons button {
+  display: block;
+  width: 200px;
+  margin: 10px auto;
+  padding: 10px;
+  background: #5dade2;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  cursor: pointer;
+  font-size: 16px;
+  color: #fff;
+  transition: background 0.3s ease;
+}
+
+.buttons button:hover {
+  background: #f39c12;
+}
+
+.comments-section {
+  margin-top: 20px;
+  background: rgba(255,255,255,0.1);
+  padding: 15px;
+  border-radius: 10px;
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  display: none;
+}
+
+.username-wrapper {
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.comments-section input,
+.comments-section textarea {
+  width: 100%;
+  border-radius: 6px;
+  padding: 10px;
+  border: none;
+  margin-bottom: 10px;
+}
+
+.comments-section textarea {
+  height: 60px;
+}
+
+.comments-section button {
+  background: #27ae60;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.comments-section ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 15px;
+}
+
+.comment-item {
+  background: rgba(255,255,255,0.2);
+  margin-bottom: 12px;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.comment-header {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.comment-body {
+  margin-bottom: 5px;
+}
+
+.comment-time {
+  font-size: 12px;
+  color: #eee;
+}
+
+.comment-actions {
+  margin-top: 5px;
+}
+
+.comment-actions button {
+  background: transparent;
+  border: none;
+  color: #f1c40f;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom, #4a90e2, #357ab7);
+  color: #fff;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+  overflow: hidden; /* supaya bubble tidak keluar layar */
+}
+
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  animation: rise 10s infinite ease-in;
+}
+
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-120vh) scale(1.5);
+    opacity: 0;
+  }
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 250px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 12px;
+  background: #5dade2;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 3px 3px 8px rgba(0,0,0,0.3);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.social-btn img {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+}
+
+.social-btn:hover {
+  transform: translateY(-3px);
+}
+
+/* Warna khusus tiap platform */
+.facebook {
+  background: #3b5998;
+}
+.facebook:hover {
+  background: #2d4373;
+}
+
+.instagram {
+  background: #e1306c;
+}
+.instagram:hover {
+  background: #c13584;
+}
+
+.twitter {
+  background: #1da1f2;
+}
+.twitter:hover {
+  background: #0d8ddb;
+}
+
+/* ===== SOCIAL BUTTON STYLE ===== */
+
+.social-btn {
+  width: 280px;
+  margin: 15px auto;
+  padding: 15px 20px;
+  background: #a9c9dc;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 500;
+  color: #1b4f72;
+  box-shadow: 0 10px 0 #0b3c5d;
+  transition: transform 0.1s ease;
+}
+
+.social-btn:active {
+  transform: translateY(5px);
+  box-shadow: 0 5px 0 #0b3c5d;
+}
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #d6eaf8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 15px;
+}
+
+.social-btn span {
+  flex-grow: 1;
+  text-align: left;
+}
+
+.arrow {
+  font-size: 22px;
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Saya - Rifaldi Hidayat</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="profile-container">
+    <h1 class="title">My Account</h1>
+    <div class="profile-pic">
+      <img src="pp.png" alt="Foto Profil">
+    </div>
+    <h2 class="name">Rifaldi Hidayat</h2>
+    
+
+  
+<div class="buttons">
+
+  <div class="social-btn" onclick="openLink('https://www.facebook.com/aldy.hidayat.568?_rdr')">
+    <div class="icon-circle">f</div>
+    <span>Facebook</span>
+  </div>
+
+  <div class="social-btn" onclick="openLink('https://www.instagram.com/hidayat_rifaldi')">
+    <div class="icon-circle">📷</div>
+    <span>Instagram</span>
+  </div>
+
+  <div class="social-btn" onclick="openLink('https://twitter.com')">
+    <div class="icon-circle">X</div>
+    <span>Twitter</span>
+  </div>
+
+  <div class="social-btn" button onclick="showComments()">
+  <div class="icon-circle">💬</div>
+  <span>Comment Columns</span>
+  </button>
+
+</div>
+
+    
+    <div id="comments" class="comments-section">
+      <h3>Komentar Pengguna</h3>
+      
+      <!-- Input nama di pojok kiri atas -->
+      <div class="username-wrapper">
+        <input type="text" id="username" placeholder="Masukkan nama Anda">
+      </div>
+      
+      <!-- Textarea komentar -->
+      <textarea id="usercomment" placeholder="Tulis komentar..."></textarea>
+      
+      <button onclick="submitComment()">Kirim</button>
+      <ul id="comment-list"></ul>
+    </div>
+  </div>
+
+  <!-- Script di paling bawah -->
+  <script src="script.js"></script>
+</body>
+</html>
