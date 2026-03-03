@@ -134,7 +134,9 @@ body {
   text-align: center;
   margin: 0;
   padding: 0;
-  overflow: hidden; /* supaya bubble tidak keluar layar */
+  overflow-x: hidden;   /* hanya sembunyikan scroll horizontal */
+  overflow-y: auto;     /* aktifkan scroll vertikal */
+}
 }
 
 .bubble {
