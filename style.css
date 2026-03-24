@@ -1,172 +1,138 @@
-/* =====================================
-   GLOBAL
-===================================== */
+/* ========================================
+   PROFILE PAGE - STYLE.CSS
+   Rifaldi Hidayat - Personal Portfolio
+   ======================================== */
 
-html, body {
-  min-height: 100%;
-}
-
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to bottom, #4a90e2, #357ab7);
-  color: #ffffff;
-  text-align: center;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-/* =====================================
-   PROFILE SECTION
-===================================== */
-
-.profile-container {
-  position: relative;
-  z-index: 2;
-  padding: 30px 20px;
-}
-
-.title {
-  font-size: 26px;
-  margin-bottom: 15px;
-}
-
-.profile-pic img {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 3px solid #ffffff;
-  object-fit: cover;
-}
-
-.name {
-  margin: 15px 0;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-/* =====================================
-   SOCIAL BUTTON
-===================================== */
-
-.buttons {
-  margin-top: 20px;
-}
-
-.social-btn {
-  width: 280px;
-  margin: 15px auto;
-  padding: 15px 20px;
-  background: #a9c9dc;
-  border-radius: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-  font-size: 18px;
-  font-weight: 500;
-  color: #1b4f72;
-  box-shadow: 0 8px 0 #0b3c5d;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.social-btn:hover {
-  transform: translateY(-3px);
-}
-
-.social-btn:active {
-  transform: translateY(4px);
-  box-shadow: 0 4px 0 #0b3c5d;
-}
-
-.icon-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: #d6eaf8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  font-size: 18px;
-  margin-right: 15px;
-}
-
-.social-btn span {
-  flex-grow: 1;
-  text-align: left;
-}
-
-/* =====================================
-   COMMENT SECTION (GISCUS)
-===================================== */
-
-.comments-section {
-  margin-top: 30px;
-  padding: 20px;
-  width: 85%;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  backdrop-filter: blur(8px);
-  display: none;
-  transition: all 0.3s ease;
-}
-
-.comments-section.active {
-  display: block;
-}
-
-/* =====================================
-   BUBBLE BACKGROUND
-===================================== */
-
-.bubble {
-  position: absolute;
-  bottom: -100px;
-  background: rgba(255, 255, 255, 0.25);
-  border-radius: 50%;
-  animation: rise 10s linear infinite;
-}
-
-@keyframes rise {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-120vh) scale(1.5);
-    opacity: 0;
-  }
-}
-
-/* style.css */
+/* ===== CSS VARIABLES & THEME ===== */
 :root {
   --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --card-bg: rgba(255, 255, 255, 0.95);
-  --text-color: #333;
+  --text-color: #333333;
+  --text-secondary: #666666;
   --btn-hover: #667eea;
+  --btn-shadow: rgba(102, 126, 234, 0.4);
+  --bubble-color: rgba(102, 126, 234, 0.3);
+  --bubble-glow: rgba(102, 126, 234, 0.5);
+  --skill-bg: #667eea;
+  --border-color: rgba(255, 255, 255, 0.2);
+  --input-bg: #f5f5f5;
+  --input-border: #dddddd;
 }
 
 [data-theme="dark"] {
   --bg-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   --card-bg: rgba(30, 30, 50, 0.95);
   --text-color: #f0f0f0;
+  --text-secondary: #aaaaaa;
   --btn-hover: #9d84f7;
+  --btn-shadow: rgba(157, 132, 247, 0.4);
+  --bubble-color: rgba(157, 132, 247, 0.3);
+  --bubble-glow: rgba(157, 132, 247, 0.5);
+  --skill-bg: #9d84f7;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --input-bg: #2a2a4a;
+  --input-border: #444466;
+}
+
+/* ===== RESET & BASE STYLES ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: var(--bg-gradient);
   color: var(--text-color);
-  transition: all 0.4s ease;
   min-height: 100vh;
-  margin: 0;
   overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ===== BUBBLE BACKGROUND ANIMATION ===== */
+.bubble {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: float-up 8s linear forwards;
+  box-shadow: 0 0 20px var(--bubble-glow);
+  background: radial-gradient(circle at 30% 30%, 
+    rgba(255, 255, 255, 0.9), 
+    var(--bubble-color));
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-120vh) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* ===== CONFETTI EFFECT ===== */
+.confetti {
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  animation: fall 3s linear forwards;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ===== MAIN CONTAINER ===== */
+.profile-container {
+  position: relative;
+  z-index: 10;
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 30px;
+  max-width: 500px;
+  margin: 40px auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== THEME TOGGLE BUTTON ===== */
 .theme-toggle {
   position: fixed;
   top: 20px;
@@ -179,14 +145,29 @@ body {
   align-items: center;
   padding: 0 5px;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   z-index: 1000;
-  transition: 0.3s;
+  transition: all 0.3s ease;
+  user-select: none;
 }
 
-.theme-toggle .moon { display: none; }
-[data-theme="dark"] .theme-toggle .sun { display: none; }
-[data-theme="dark"] .theme-toggle .moon { display: block; }
+.theme-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle .moon {
+  display: none;
+  font-size: 0.9rem;
+}
+
+[data-theme="dark"] .theme-toggle .sun {
+  display: none;
+}
+
+[data-theme="dark"] .theme-toggle .moon {
+  display: block;
+}
 
 .theme-toggle::after {
   content: '';
@@ -194,9 +175,398 @@ body {
   height: 20px;
   background: #ffd700;
   border-radius: 50%;
-  transition: 0.3s;
+  transition: transform 0.3s ease;
+  position: absolute;
+  left: 3px;
 }
+
 [data-theme="dark"] .theme-toggle::after {
   background: #c0c0c0;
   transform: translateX(24px);
+}
+
+/* ===== TITLE STYLES ===== */
+.title {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: var(--btn-hover);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* ===== PROFILE PICTURE ===== */
+.profile-pic {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.profile-pic img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid var(--btn-hover);
+  box-shadow: 0 8px 25px var(--btn-shadow);
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+.profile-pic img:hover {
+  transform: scale(1.05) rotate(5deg);
+  box-shadow: 0 12px 35px var(--btn-shadow);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 8px 25px var(--btn-shadow);
+  }
+  50% {
+    box-shadow: 0 8px 40px var(--btn-hover);
+  }
+}
+
+/* ===== NAME WITH TYPEWRITER ===== */
+.name {
+  text-align: center;
+  font-size: 1.8rem;
+  margin: 15px 0 25px;
+  font-weight: 700;
+  min-height: 2.5rem;
+  letter-spacing: 0.5px;
+}
+
+.cursor {
+  animation: blink 1s infinite;
+  color: var(--btn-hover);
+  margin-left: 3px;
+  display: inline-block;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ===== ABOUT SECTION ===== */
+.about-section {
+  text-align: center;
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 16px;
+  animation: fadeInUp 0.6s ease 0.2s both;
+}
+
+.bio {
+  margin-bottom: 15px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.skills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.skill-tag {
+  background: var(--skill-bg);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  animation: popIn 0.3s ease backwards;
+  cursor: default;
+}
+
+.skill-tag:nth-child(1) { animation-delay: 0.1s; }
+.skill-tag:nth-child(2) { animation-delay: 0.2s; }
+.skill-tag:nth-child(3) { animation-delay: 0.3s; }
+.skill-tag:nth-child(4) { animation-delay: 0.4s; }
+.skill-tag:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes popIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.skill-tag:hover {
+  transform: scale(1.1);
+  box-shadow: 0 5px 15px var(--btn-shadow);
+}
+
+/* ===== SOCIAL BUTTONS ===== */
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 25px 0;
+}
+
+.social-btn {
+  background: var(--card-bg);
+  border: 2px solid transparent;
+  border-radius: 16px;
+  padding: 15px 25px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease backwards;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.social-btn:nth-child(1) { animation-delay: 0.1s; }
+.social-btn:nth-child(2) { animation-delay: 0.2s; }
+.social-btn:nth-child(3) { animation-delay: 0.3s; }
+.social-btn:nth-child(4) { animation-delay: 0.4s; }
+
+.social-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s ease;
+}
+
+.social-btn:hover::before {
+  left: 100%;
+}
+
+.social-btn:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 12px 30px var(--btn-shadow);
+  border-color: var(--btn-hover);
+}
+
+/* Platform specific hover colors */
+.social-btn[data-platform="facebook"]:hover {
+  background: #3b5998;
+  color: white;
+}
+
+.social-btn[data-platform="instagram"]:hover {
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  color: white;
+}
+
+.social-btn[data-platform="twitter"]:hover {
+  background: #000000;
+  color: white;
+}
+
+.social-btn[data-platform="comment"]:hover {
+  background: #4CAF50;
+  color: white;
+}
+
+.icon-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--btn-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.social-btn:hover .icon-circle {
+  transform: rotate(360deg) scale(1.1);
+  box-shadow: 0 0 20px var(--btn-hover);
+}
+
+.social-btn span {
+  font-weight: 500;
+  font-size: 1rem;
+  flex: 1;
+}
+
+/* ===== COMMENTS SECTION ===== */
+.comments-section {
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px dashed var(--border-color);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+}
+
+.comments-section.active {
+  max-height: 1000px;
+  padding-top: 25px;
+  opacity: 1;
+}
+
+.comments-section h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--btn-hover);
+  font-size: 1.3rem;
+}
+
+#giscus-container {
+  margin-top: 10px;
+}
+
+/* Giscus iframe styling */
+.giscus-frame,
+.giscus-frame iframe {
+  width: 100%;
+  border: none;
+  color-scheme: light dark;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  animation: fadeIn 1s ease 1s both;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 600px) {
+  .profile-container {
+    margin: 20px;
+    padding: 25px 20px;
+    border-radius: 20px;
+  }
+  
+  .name {
+    font-size: 1.5rem;
+  }
+  
+  .title {
+    font-size: 1.3rem;
+  }
+  
+  .social-btn {
+    padding: 12px 20px;
+  }
+  
+  .icon-circle {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+  
+  .theme-toggle {
+    top: 15px;
+    right: 15px;
+  }
+  
+  .profile-pic img {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+@media (min-width: 768px) {
+  .profile-container {
+    margin: 60px auto;
+    padding: 35px;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Focus styles for keyboard navigation */
+.social-btn:focus-visible,
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--btn-hover);
+  outline-offset: 3px;
+}
+
+.social-btn:focus-visible {
+  border-color: var(--btn-hover);
+}
+
+/* Screen reader only class */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ===== LOADING STATE ===== */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* ===== UTILITY CLASSES ===== */
+.hidden {
+  display: none !important;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+  
+  .theme-toggle,
+  .bubble,
+  .confetti {
+    display: none !important;
+  }
+  
+  .profile-container {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    margin: 0;
+    max-width: 100%;
+  }
 }
