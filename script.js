@@ -1,7 +1,8 @@
 /**
- * PROFILE PAGE - MOBILE OPTIMIZED
+ * PROFILE PAGE - FINAL VERSION
  * Rifaldi Hidayat - Personal Portfolio
  * Fitur: Theme Toggle, Typewriter, Bubbles, Confetti, Telegram Bot Tracking
+ * ✅ LINK MEDIA SOSIAL ORIGINAL SUDAH DIKEMBALIKAN
  */
 
 (function() {
@@ -15,12 +16,13 @@
       skills: ["HTML5", "CSS3", "JavaScript", "React", "Node.js"]
     },
     
+    // ✅ LINK ORIGINAL DIKEMBALIKAN
     socialLinks: [
       {
         platform: "facebook",
         label: "Facebook",
         icon: "f",
-        url: "https://www.facebook.com/aldy.hidayat.568"
+        url: "https://www.facebook.com/aldy.hidayat.568?_rdr"
       },
       {
         platform: "instagram",
@@ -50,7 +52,7 @@
       mapping: "pathname",
       strict: "0",
       reactionsEnabled: "1",
-      emitMeta "0",
+      emitMetadata: "0",
       inputPosition: "bottom",
       theme: "noborder_light",
       lang: "id"
