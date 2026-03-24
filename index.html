@@ -2,87 +2,93 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta name="description" content="Profil resmi Rifaldi Hidayat - Developer & Content Creator">
+  <meta name="theme-color" content="#667eea">
   <meta property="og:title" content="Rifaldi Hidayat | My Account">
   <meta property="og:description" content="Hubungi saya melalui media sosial berikut">
   <meta property="og:type" content="website">
   <title>Profil Saya - Rifaldi Hidayat</title>
   
-  <!-- Link ke CSS eksternal -->
   <link rel="stylesheet" href="style.css">
-  
-  <!-- Preconnect untuk performa -->
   <link rel="preconnect" href="https://giscus.app">
-  <link rel="preconnect" href="https://api.telegram.org">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
 </head>
 
 <body>
-  <!-- Theme Toggle Button -->
-  <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="Toggle dark/light mode">
+  <!-- Theme Toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode" title="Ganti Tema">
     <span class="sun">☀️</span>
     <span class="moon">🌙</span>
-  </div>
+  </button>
 
-  <!-- Visitor Counter Badge -->
+  <!-- Visitor Counter -->
   <div class="visitor-counter" id="visitorCounter" title="Total pengunjung">
     <span class="counter-icon">👁️</span>
     <span class="counter-value" id="visitCount">0</span>
   </div>
 
   <!-- Main Container -->
-  <div class="profile-container">
+  <main class="profile-container">
     
-    <!-- Title -->
-    <h1 class="title">✨ My Account</h1>
+    <!-- Header -->
+    <header class="profile-header">
+      <h1 class="title">✨ My Account</h1>
+    </header>
 
     <!-- Profile Picture -->
-    <div class="profile-pic">
-      <img src="pp.png" alt="Foto Profil Rifaldi Hidayat" id="profileImage" onerror="this.src='https://ui-avatars.com/api/?name=Rifaldi+Hidayat&size=120&background=667eea&color=fff'">
-    </div>
+    <section class="profile-pic-section">
+      <div class="profile-pic-wrapper">
+        <img src="pp.png" alt="Foto Profil Rifaldi Hidayat" id="profileImage" 
+             onerror="this.src='https://ui-avatars.com/api/?name=Rifaldi+Hidayat&size=200&background=667eea&color=fff&bold=true'">
+        <div class="profile-pic-ring"></div>
+      </div>
+    </section>
 
-    <!-- Name with Typewriter Effect -->
-    <h2 class="name">
-      <span id="typewriter"></span><span class="cursor" aria-hidden="true">|</span>
-    </h2>
+    <!-- Name with Typewriter -->
+    <section class="name-section">
+      <h2 class="name">
+        <span id="typewriter"></span><span class="cursor" aria-hidden="true">|</span>
+      </h2>
+    </section>
 
     <!-- About Section -->
-    <div class="about-section">
-      <p class="bio">👋 Halo! Saya pengembang web yang suka membuat pengalaman digital yang menarik dan interaktif.</p>
-      <div class="skills" id="skillsContainer">
-        <!-- Skill tags akan di-generate oleh JavaScript -->
+    <section class="about-section">
+      <div class="bio-card">
+        <p class="bio">👋 Halo! Saya pengembang web yang suka membuat pengalaman digital yang menarik dan interaktif.</p>
+        <div class="skills" id="skillsContainer" role="list" aria-label="Keahlian"></div>
       </div>
-    </div>
+    </section>
 
     <!-- Social Media Buttons -->
-    <div class="buttons" id="socialButtons">
-      <!-- Tombol akan di-generate oleh JavaScript -->
-    </div>
+    <section class="buttons-section">
+      <div class="buttons" id="socialButtons" role="group" aria-label="Tombol media sosial"></div>
+    </section>
 
-    <!-- Comments Section with Giscus -->
-    <div class="comments-section" id="commentsSection">
-      <h3>💭 Komentar</h3>
+    <!-- Comments Section -->
+    <section class="comments-section" id="commentsSection" aria-live="polite">
+      <h3 class="comments-title">💭 Komentar</h3>
       <div id="giscus-container"></div>
-    </div>
+    </section>
 
-    <!-- Admin Link (Hidden for regular users) -->
-    <div class="admin-link" id="adminLink">
-      <a href="admin.html" target="_blank" title="Dashboard Monitoring">
-        📊 Admin Dashboard
+    <!-- Admin Link -->
+    <nav class="admin-nav">
+      <a href="admin.html" class="admin-link" target="_blank" rel="noopener">
+        <span class="admin-icon">📊</span>
+        <span>Admin Dashboard</span>
       </a>
-    </div>
+    </nav>
 
-  </div>
+  </main>
 
   <!-- Footer -->
   <footer class="footer">
-    <p>© <span id="year"></span> Rifaldi Hidayat • Made with ❤️ • <span id="trackingStatus">🟢 Active</span></p>
+    <p>© <span id="year"></span> Rifaldi Hidayat • Made with <span class="heart">❤️</span> • <span id="trackingStatus" class="status-badge">🟢 Active</span></p>
   </footer>
 
-  <!-- Link ke JavaScript eksternal -->
+  <!-- Toast Notification -->
+  <div id="toast" class="toast" role="alert" aria-live="assertive"></div>
+
   <script src="script.js" defer></script>
 </body>
 </html>
