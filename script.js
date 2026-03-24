@@ -686,4 +686,13 @@
 
   // ===== START =====
   if (document.readyState === 'loading') {
-    document.addE
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  window.addEventListener('error', (e) => {
+    log(`Global error: ${e.message}`, 'error');
+  });
+
+})();
