@@ -1,8 +1,6 @@
 /**
- * PROFILE PAGE - FINAL VERSION
+ * PROFILE PAGE - FINAL VERSION (FIXED)
  * Rifaldi Hidayat - Personal Portfolio
- * Fitur: Theme Toggle, Typewriter, Bubbles, Confetti, Telegram Bot Tracking
- * ✅ LINK MEDIA SOSIAL ORIGINAL SUDAH DIKEMBALIKAN
  */
 
 (function() {
@@ -16,7 +14,6 @@
       skills: ["HTML5", "CSS3", "JavaScript", "React", "Node.js"]
     },
     
-    // ✅ LINK ORIGINAL DIKEMBALIKAN
     socialLinks: [
       {
         platform: "facebook",
@@ -127,7 +124,7 @@
   function log(message, level = 'info') {
     if (!CONFIG.telegram.debug) return;
     const prefix = { info: 'ℹ️', warn: '⚠️', error: '❌', success: '✅' };
-    console.log(`${prefix[level]} [Tracking] ${message}`);
+    console.log(prefix[level] + ' [Tracking] ' + message);
   }
 
   // ===== TRACKING =====
@@ -158,7 +155,7 @@
       trackVisit();
     }
     
-    CONFIG.socialLinks.forEach(link => {
+    CONFIG.socialLinks.forEach(function(link) {
       if (!state.clickCounts[link.platform]) {
         state.clickCounts[link.platform] = 0;
       }
@@ -174,7 +171,7 @@
         state.clickCounts = data.clicks || {};
         state.lastVisitTime = data.lastVisit || null;
       } catch (e) {
-        log(`Error loading data: ${e.message}`, 'error');
+        log('Error loading data: ' + e.message, 'error');
       }
     }
     updateVisitCounter();
@@ -215,7 +212,7 @@
         });
       }
       
-      log(`👁️ New visit: #${state.visitCount}`);
+      log('👁️ New visit: #' + state.visitCount);
     }
   }
 
@@ -232,14 +229,14 @@
     
     if (CONFIG.telegram.sendNotification && state.trackingEnabled) {
       sendTelegramNotification('click', {
-        platform,
+        platform: platform,
         count: state.clickCounts[platform],
         timestamp: Date.now(),
         url: window.location.href
       });
     }
     
-    log(`🖱️ Click: ${platform} (${state.clickCounts[platform]})`);
+    log('🖱️ Click: ' + platform + ' (' + state.clickCounts[platform] + ')');
   }
 
   function updateVisitCounter() {
@@ -259,14 +256,14 @@
     element.textContent = current + increment;
     
     if (current + increment < target) {
-      setTimeout(() => animateCounter(element, target), 50);
+      setTimeout(function() { animateCounter(element, target); }, 50);
     } else {
       element.textContent = target;
     }
   }
 
   function updateClickBadge(platform) {
-    const btn = document.querySelector(`.social-btn[data-platform="${platform}"]`);
+    const btn = document.querySelector('.social-btn[data-platform="' + platform + '"]');
     if (!btn) return;
     
     let badge = btn.querySelector('.click-badge');
@@ -285,8 +282,9 @@
     badge.style.animation = 'popIn 0.3s ease';
   }
 
-  function updateTrackingStatus(enabled, type = 'telegram') {
+  function updateTrackingStatus(enabled, type) {
     if (!elements.trackingStatus) return;
+    if (type === undefined) type = 'telegram';
     
     if (enabled === true) {
       elements.trackingStatus.textContent = '🟢 Active';
@@ -309,25 +307,26 @@
     state.telegramTested = true;
     
     try {
-      const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/getMe`;
+      const url = 'https://api.telegram.org/bot' + CONFIG.telegram.botToken + '/getMe';
       const response = await fetch(url);
       const result = await response.json();
       
       if (result.ok) {
-        log(`Bot verified: @${result.result.username}`, 'success');
+        log('Bot verified: @' + result.result.username, 'success');
         await sendTelegramNotification('test', {
           message: '🔔 *Testing Connection*\n\nBot tracking berhasil terhubung!'
         });
       } else {
-        log(`Bot test failed: ${result.description}`, 'error');
+        log('Bot test failed: ' + result.description, 'error');
       }
     } catch (error) {
-      log(`Connection error: ${error.message}`, 'error');
+      log('Connection error: ' + error.message, 'error');
     }
   }
 
   async function sendTelegramNotification(type, data) {
-    const { botToken, chatId } = CONFIG.telegram;
+    const botToken = CONFIG.telegram.botToken;
+    const chatId = CONFIG.telegram.chatId;
     if (!botToken || !chatId) return;
     
     let message = '';
@@ -335,15 +334,15 @@
     if (type === 'test') {
       message = data.message;
     } else if (type === 'visit') {
-      message = `👁️ *New Visit*\n\n📊 Total: *${data.count}*\n🔗 \`${data.url}\`\n🌐 ${data.referrer}\n⏰ ${new Date(data.timestamp).toLocaleString('id-ID')}`;
+      message = '👁️ *New Visit*\n\n📊 Total: *' + data.count + '*\n🔗 `' + data.url + '`\n🌐 ' + data.referrer + '\n⏰ ' + new Date(data.timestamp).toLocaleString('id-ID');
     } else if (type === 'click') {
-      message = `🖱️ *Button Click*\n\n🔘 ${data.platform}\n📊 Total: *${data.count}*\n⏰ ${new Date(data.timestamp).toLocaleString('id-ID')}`;
+      message = '🖱️ *Button Click*\n\n🔘 ' + data.platform + '\n📊 Total: *' + data.count + '*\n⏰ ' + new Date(data.timestamp).toLocaleString('id-ID');
     }
     
     if (!message) return;
     
     try {
-      const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const url = 'https://api.telegram.org/bot' + botToken + '/sendMessage';
       
       await fetch(url, {
         method: 'POST',
@@ -358,18 +357,24 @@
       
       log('✅ Telegram sent', 'success');
     } catch (error) {
-      log(`Error: ${error.message}`, 'error');
+      log('Error: ' + error.message, 'error');
     }
   }
 
   async function syncToTelegram(data) {
-    const { botToken, chatId } = CONFIG.telegram;
+    const botToken = CONFIG.telegram.botToken;
+    const chatId = CONFIG.telegram.chatId;
     if (!botToken || !chatId) return;
     
-    const message = `📊 *Stats*\n\n👁️ Visits: *${data.visits}*\n${Object.entries(data.clicks).map(([p, c]) => `• ${p}: *${c}*`).join('\n')}`;
+    let clicksText = '';
+    Object.entries(data.clicks).forEach(function(item) {
+      clicksText += '• ' + item[0] + ': *' + item[1] + '*\n';
+    });
+    
+    const message = '📊 *Stats*\n\n👁️ Visits: *' + data.visits + '*\n' + clicksText;
     
     try {
-      const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const url = 'https://api.telegram.org/bot' + botToken + '/sendMessage';
       await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -380,7 +385,7 @@
         })
       });
     } catch (error) {
-      log(`Sync error: ${error.message}`, 'error');
+      log('Sync error: ' + error.message, 'error');
     }
   }
 
@@ -434,11 +439,11 @@
     if (!elements.skillsContainer) return;
     
     elements.skillsContainer.innerHTML = '';
-    CONFIG.profile.skills.forEach((skill, index) => {
+    CONFIG.profile.skills.forEach(function(skill, index) {
       const tag = document.createElement('span');
       tag.className = 'skill-tag';
       tag.textContent = skill;
-      tag.style.animationDelay = `${0.1 + index * 0.1}s`;
+      tag.style.animationDelay = (0.1 + index * 0.1) + 's';
       tag.setAttribute('role', 'listitem');
       elements.skillsContainer.appendChild(tag);
     });
@@ -449,30 +454,27 @@
     
     elements.socialButtons.innerHTML = '';
     
-    CONFIG.socialLinks.forEach((item, index) => {
+    CONFIG.socialLinks.forEach(function(item, index) {
       const btn = document.createElement('div');
       btn.className = 'social-btn';
       btn.setAttribute('data-platform', item.platform);
       btn.setAttribute('role', 'button');
       btn.setAttribute('tabindex', '0');
-      btn.style.animationDelay = `${0.1 + index * 0.1}s`;
+      btn.style.animationDelay = (0.1 + index * 0.1) + 's';
       
-      btn.innerHTML = `
-        <div class="icon-circle" aria-hidden="true">${item.icon}</div>
-        <span>${item.label}</span>
-      `;
+      btn.innerHTML = '<div class="icon-circle" aria-hidden="true">' + item.icon + '</div><span>' + item.label + '</span>';
       
-      const handleClick = () => {
+      const handleClick = function() {
         trackClick(item.platform);
         if (item.action) {
-          window[item.action]?.();
+          if (window[item.action]) window[item.action]();
         } else {
           openLink(item.url);
         }
       };
       
       btn.addEventListener('click', handleClick);
-      btn.addEventListener('keydown', (e) => {
+      btn.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           handleClick();
@@ -506,7 +508,7 @@
     if (!cleanUrl.startsWith('http')) return;
     
     createConfetti(window.innerWidth / 2, 150);
-    setTimeout(() => {
+    setTimeout(function() {
       window.open(cleanUrl, '_blank', 'noopener,noreferrer');
     }, 200);
   }
@@ -532,8 +534,8 @@
     script.async = true;
     script.crossOrigin = 'anonymous';
     
-    Object.entries(CONFIG.giscus).forEach(([key, value]) => {
-      script.setAttribute(`data-${key}`, value);
+    Object.entries(CONFIG.giscus).forEach(function(item) {
+      script.setAttribute('data-' + item[0], item[1]);
     });
     
     script.setAttribute('data-theme', state.theme === 'dark' ? 'noborder_dark' : 'noborder_light');
@@ -546,15 +548,12 @@
     const size = Math.random() * 40 + 15;
     
     bubble.className = 'bubble';
-    bubble.style.cssText = `
-      width: ${size}px;
-      height: ${size}px;
-      left: ${Math.random() * 100}vw;
-      top: 100vh;
-    `;
+    bubble.style.cssText = 'width: ' + size + 'px; height: ' + size + 'px; left: ' + (Math.random() * 100) + 'vw; top: 100vh;';
     
     document.body.appendChild(bubble);
-    setTimeout(() => bubble.parentNode?.removeChild(bubble), CONFIG.animations.bubbleLifetime);
+    setTimeout(function() {
+      if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
+    }, CONFIG.animations.bubbleLifetime);
   }
 
   function createConfetti(x, y) {
@@ -572,25 +571,12 @@
       const angle = Math.random() * 60 - 30;
       const velocityX = Math.random() * 200 - 100;
       
-      confetti.style.cssText = `
-        position: fixed;
-        left: ${x}px;
-        top: ${y}px;
-        width: ${size}px;
-        height: ${size}px;
-        background: ${color};
-        border-radius: ${shape};
-        animation-delay: ${delay}s;
-        animation-duration: ${duration}s;
-        --velocity-x: ${velocityX}px;
-        transform: rotate(${angle}deg);
-        pointer-events: none;
-        z-index: 9999;
-        animation: fall ${duration}s linear ${delay}s forwards;
-      `;
+      confetti.style.cssText = 'position: fixed; left: ' + x + 'px; top: ' + y + 'px; width: ' + size + 'px; height: ' + size + 'px; background: ' + color + '; border-radius: ' + shape + '; animation-delay: ' + delay + 's; animation-duration: ' + duration + 's; --velocity-x: ' + velocityX + 'px; transform: rotate(' + angle + 'deg); pointer-events: none; z-index: 9999; animation: fall ' + duration + 's linear ' + delay + 's forwards;';
       
       document.body.appendChild(confetti);
-      setTimeout(() => confetti.parentNode?.removeChild(confetti), (duration + delay) * 1000);
+      setTimeout(function() {
+        if (confetti.parentNode) confetti.parentNode.removeChild(confetti);
+      }, (duration + delay) * 1000);
     }
   }
 
@@ -599,18 +585,7 @@
     
     const style = document.createElement('style');
     style.id = 'confetti-keyframes';
-    style.textContent = `
-      @keyframes fall {
-        0% {
-          transform: translateY(0) rotate(0deg) translateX(0);
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(100vh) rotate(720deg) translateX(var(--velocity-x, 0));
-          opacity: 0;
-        }
-      }
-    `;
+    style.textContent = '@keyframes fall { 0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg) translateX(var(--velocity-x, 0)); opacity: 0; } }';
     document.head.appendChild(style);
   }
 
@@ -624,21 +599,24 @@
   }
 
   // ===== TOAST =====
-  function showToast(message, type = 'info') {
+  function showToast(message, type) {
     if (!elements.toast) return;
+    if (type === undefined) type = 'info';
     
-    elements.toast.className = `toast ${type}`;
+    elements.toast.className = 'toast ' + type;
     elements.toast.textContent = message;
     elements.toast.classList.add('show');
     
-    setTimeout(() => elements.toast.classList.remove('show'), 3000);
+    setTimeout(function() {
+      elements.toast.classList.remove('show');
+    }, 3000);
   }
 
   // ===== EVENT LISTENERS =====
   function setupEventListeners() {
     if (elements.themeToggle) {
       elements.themeToggle.addEventListener('click', toggleTheme);
-      elements.themeToggle.addEventListener('keydown', (e) => {
+      elements.themeToggle.addEventListener('keydown', function(e) {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           toggleTheme();
@@ -646,27 +624,26 @@
       });
     }
     
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
       if (!localStorage.getItem('theme')) {
         state.theme = e.matches ? 'dark' : 'light';
         applyTheme(state.theme);
       }
     });
     
-    window.addEventListener('message', (event) => {
+    window.addEventListener('message', function(event) {
       if (event.origin !== 'https://giscus.app') return;
-      if (event.data?.giscus?.resizeHeight && elements.commentsSection) {
-        elements.commentsSection.style.minHeight = `${event.data.giscus.resizeHeight}px`;
+      if (event.data && event.data.giscus && event.data.giscus.resizeHeight && elements.commentsSection) {
+        elements.commentsSection.style.minHeight = event.data.giscus.resizeHeight + 'px';
       }
     });
     
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener('beforeunload', function() {
       saveTrackingData();
     });
     
-    // Prevent zoom on double tap (mobile)
     let lastTouchEnd = 0;
-    document.addEventListener('touchend', (e) => {
+    document.addEventListener('touchend', function(e) {
       const now = Date.now();
       if (now - lastTouchEnd <= 300) {
         e.preventDefault();
@@ -679,12 +656,14 @@
   window.openLink = openLink;
   window.toggleComments = toggleComments;
   window.toggleTheme = toggleTheme;
-  window.getTrackingData = () => ({
-    visits: state.visitCount,
-    clicks: state.clickCounts,
-    lastVisit: state.lastVisitTime
-  });
-  window.testTelegram = () => testTelegramConnection();
+  window.getTrackingData = function() {
+    return {
+      visits: state.visitCount,
+      clicks: state.clickCounts,
+      lastVisit: state.lastVisitTime
+    };
+  };
+  window.testTelegram = testTelegramConnection;
 
   // ===== START =====
   if (document.readyState === 'loading') {
@@ -693,8 +672,8 @@
     init();
   }
 
-  window.addEventListener('error', (e) => {
-    log(`Global error: ${e.message}`, 'error');
+  window.addEventListener('error', function(e) {
+    log('Global error: ' + e.message, 'error');
   });
 
 })();
