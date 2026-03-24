@@ -3,75 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <div class="theme-toggle" onclick="toggleTheme()">
-  <span class="sun">☀️</span>
-  <span class="moon">🌙</span>
-</div>
+  <meta name="description" content="Profil resmi Rifaldi Hidayat - Developer & Content Creator">
+  <meta property="og:title" content="Rifaldi Hidayat | My Account">
+  <meta property="og:description" content="Hubungi saya melalui media sosial berikut">
+  <meta property="og:type" content="website">
   <title>Profil Saya - Rifaldi Hidayat</title>
+  
+  <!-- Link ke CSS eksternal -->
   <link rel="stylesheet" href="style.css">
+  
+  <!-- Preconnect untuk performa Giscus -->
+  <link rel="preconnect" href="https://giscus.app">
 </head>
 
 <body>
+  <!-- Theme Toggle Button -->
+  <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="Toggle dark/light mode">
+    <span class="sun">☀️</span>
+    <span class="moon">🌙</span>
+  </div>
+
+  <!-- Main Container -->
   <div class="profile-container">
-    <h1 class="title">My Account</h1>
+    
+    <!-- Title -->
+    <h1 class="title">✨ My Account</h1>
 
+    <!-- Profile Picture -->
     <div class="profile-pic">
-      <img src="pp.png" alt="Foto Profil">
+      <img src="pp.png" alt="Foto Profil Rifaldi Hidayat" id="profileImage" onerror="this.src='https://ui-avatars.com/api/?name=Rifaldi+Hidayat&size=120&background=667eea&color=fff'">
     </div>
 
-    <h2 class="name">Rifaldi Hidayat</h2>
+    <!-- Name with Typewriter Effect -->
+    <h2 class="name">
+      <span id="typewriter"></span><span class="cursor" aria-hidden="true">|</span>
+    </h2>
 
-    <div class="buttons">
-
-      <div class="social-btn" onclick="openLink('https://www.facebook.com/aldy.hidayat.568?_rdr')">
-        <div class="icon-circle">f</div>
-        <span>Facebook</span>
+    <!-- About Section -->
+    <div class="about-section">
+      <p class="bio">👋 Halo! Saya pengembang web yang suka membuat pengalaman digital yang menarik dan interaktif.</p>
+      <div class="skills" id="skillsContainer">
+        <!-- Skill tags akan di-generate oleh JavaScript -->
       </div>
-
-      <div class="social-btn" onclick="openLink('https://www.instagram.com/hidayat_rifaldi')">
-        <div class="icon-circle">📷</div>
-        <span>Instagram</span>
-      </div>
-
-      <div class="social-btn" onclick="openLink('https://x.com/RifaldiHidaya15')">
-        <div class="icon-circle">X</div>
-        <span>Twitter</span>
-      </div>
-
-      <!-- Tombol Comment -->
-      <div class="social-btn" onclick="showComments()">
-        <div class="icon-circle">💬</div>
-        <span>Comment Columns</span>
-      </div>
-
     </div>
 
-    <!-- Section Komentar -->
-    <div class="comments-section">
-      <h3>Komentar</h3>
+    <!-- Social Media Buttons -->
+    <div class="buttons" id="socialButtons">
+      <!-- Tombol akan di-generate oleh JavaScript -->
+    </div>
 
-      <!-- Giscus -->
-<script src="https://giscus.app/client.js"
-        data-repo="Aldi451/Biodata-akun"
-        data-repo-id="R_kgDORc6sAA"
-        data-category="General"
-        data-category-id="DIC_kwDORc6sAM4C3kFi"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="noborder_light"
-        data-lang="id"
-        crossorigin="anonymous"
-        async>
-</script>
-
+    <!-- Comments Section with Giscus -->
+    <div class="comments-section" id="commentsSection">
+      <h3>💭 Komentar</h3>
+      <div id="giscus-container"></div>
     </div>
 
   </div>
 
-  <script src="script.js"></script>
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© <span id="year"></span> Rifaldi Hidayat • Made with ❤️</p>
+  </footer>
+
+  <!-- Link ke JavaScript eksternal -->
+  <script src="script.js" defer></script>
 </body>
 </html>
-
