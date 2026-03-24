@@ -1,5 +1,5 @@
 /* ========================================
-   PROFILE PAGE - MOBILE OPTIMIZED
+   PROFILE PAGE - FINAL MOBILE OPTIMIZED
    Rifaldi Hidayat - Personal Portfolio
    ======================================== */
 
@@ -58,7 +58,7 @@ body {
   background: var(--bg-gradient);
   color: var(--text-color);
   min-height: 100vh;
-  min-height: 100dvh; /* Dynamic viewport height for mobile */
+  min-height: 100dvh;
   overflow-x: hidden;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -389,7 +389,7 @@ body {
   animation: fadeInUp 0.5s ease backwards;
   text-decoration: none;
   color: var(--text-color);
-  min-height: 56px; /* Touch target minimum */
+  min-height: 56px;
 }
 
 .social-btn:nth-child(1) { animation-delay: 0.1s; }
