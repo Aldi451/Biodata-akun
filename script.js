@@ -65,7 +65,7 @@
       botToken: "7065072791:AAE2MV1D0yBVJmOETL8Q0k5ZPpWcCHy_GEA",
       
       // ⚠️ GANTI DENGAN CHAT ID ANDA (bisa dapat dari @userinfobot)
-      chatId: "RifaldiHbot",
+      chatId: "6888495331",
       
       // Enable/disable tracking
       enabled: true,
