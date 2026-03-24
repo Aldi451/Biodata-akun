@@ -1,6 +1,7 @@
 /* ========================================
    PROFILE PAGE - STYLE.CSS
    Rifaldi Hidayat - Personal Portfolio
+   With Telegram Bot Monitoring
    ======================================== */
 
 /* ===== CSS VARIABLES & THEME ===== */
@@ -17,6 +18,10 @@
   --border-color: rgba(255, 255, 255, 0.2);
   --input-bg: #f5f5f5;
   --input-border: #dddddd;
+  --telegram-color: #0088cc;
+  --success-color: #4CAF50;
+  --warning-color: #ff9800;
+  --danger-color: #f44336;
 }
 
 [data-theme="dark"] {
@@ -103,6 +108,41 @@ body {
     transform: translateY(100vh) rotate(720deg);
     opacity: 0;
   }
+}
+
+/* ===== VISITOR COUNTER BADGE ===== */
+.visitor-counter {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: var(--card-bg);
+  padding: 8px 16px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid var(--btn-hover);
+}
+
+.visitor-counter:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.counter-icon {
+  font-size: 1.1rem;
+}
+
+.counter-value {
+  color: var(--btn-hover);
+  font-weight: 700;
+  min-width: 30px;
+  text-align: center;
 }
 
 /* ===== MAIN CONTAINER ===== */
@@ -405,6 +445,18 @@ body {
   flex: 1;
 }
 
+/* Click counter badge on buttons */
+.click-badge {
+  background: var(--telegram-color);
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+  margin-left: 8px;
+  animation: popIn 0.3s ease;
+}
+
 /* ===== COMMENTS SECTION ===== */
 .comments-section {
   margin-top: 25px;
@@ -441,6 +493,32 @@ body {
   color-scheme: light dark;
 }
 
+/* ===== ADMIN LINK ===== */
+.admin-link {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border-color);
+}
+
+.admin-link a {
+  color: var(--telegram-color);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: rgba(0, 136, 204, 0.1);
+  transition: all 0.3s ease;
+  display: inline-block;
+}
+
+.admin-link a:hover {
+  background: var(--telegram-color);
+  color: white;
+  transform: scale(1.05);
+}
+
 /* ===== FOOTER ===== */
 .footer {
   text-align: center;
@@ -448,6 +526,14 @@ body {
   color: var(--text-secondary);
   font-size: 0.85rem;
   animation: fadeIn 1s ease 1s both;
+}
+
+#trackingStatus {
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: rgba(76, 175, 80, 0.2);
+  color: var(--success-color);
 }
 
 @keyframes fadeIn {
@@ -481,8 +567,18 @@ body {
     font-size: 1rem;
   }
   
-  .theme-toggle {
+  .theme-toggle,
+  .visitor-counter {
     top: 15px;
+  }
+  
+  .visitor-counter {
+    left: 15px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .theme-toggle {
     right: 15px;
   }
   
@@ -513,7 +609,8 @@ body {
 
 /* Focus styles for keyboard navigation */
 .social-btn:focus-visible,
-.theme-toggle:focus-visible {
+.theme-toggle:focus-visible,
+.admin-link a:focus-visible {
   outline: 3px solid var(--btn-hover);
   outline-offset: 3px;
 }
@@ -558,8 +655,10 @@ body {
   }
   
   .theme-toggle,
+  .visitor-counter,
   .bubble,
-  .confetti {
+  .confetti,
+  .admin-link {
     display: none !important;
   }
   
@@ -569,4 +668,42 @@ body {
     margin: 0;
     max-width: 100%;
   }
+}
+
+/* ===== NOTIFICATION TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--card-bg);
+  padding: 12px 24px;
+  border-radius: 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0;
+  transition: all 0.3s ease;
+  border: 2px solid var(--btn-hover);
+}
+
+.toast.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.toast.success {
+  border-color: var(--success-color);
+}
+
+.toast.error {
+  border-color: var(--danger-color);
+}
+
+.toast-icon {
+  font-size: 1.2rem;
 }
