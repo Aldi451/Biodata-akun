@@ -1,7 +1,7 @@
 /**
  * PROFILE PAGE - FINAL VERSION
  * Rifaldi Hidayat - Personal Portfolio
- * Tracking: Hanya ke Telegram (tidak ditampilkan di web)
+ * Tracking: Hanya ke Telegram (tidak ditampilkan di web) 
  */
 
 (function() {
