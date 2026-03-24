@@ -1,30 +1,26 @@
 /**
- * PROFILE PAGE - SCRIPT.JS
+ * PROFILE PAGE - MOBILE OPTIMIZED
  * Rifaldi Hidayat - Personal Portfolio
  * Fitur: Theme Toggle, Typewriter, Bubbles, Confetti, Telegram Bot Tracking
- * 
- * ⚠️ PENTING: Pastikan bot token dan chat ID sudah benar!
  */
 
 (function() {
   'use strict';
 
-  // ===== KONFIGURASI GLOBAL =====
+  // ===== KONFIGURASI =====
   const CONFIG = {
-    // Data profil
     profile: {
       name: "Rifaldi Hidayat",
       bio: "👋 Halo! Saya pengembang web yang suka membuat pengalaman digital yang menarik dan interaktif.",
       skills: ["HTML5", "CSS3", "JavaScript", "React", "Node.js"]
     },
     
-    // Data media sosial (URL sudah dibersihkan dari spasi)
     socialLinks: [
       {
         platform: "facebook",
         label: "Facebook",
         icon: "f",
-        url: "https://www.facebook.com/aldy.hidayat.568?_rdr"
+        url: "https://www.facebook.com/aldy.hidayat.568"
       },
       {
         platform: "instagram",
@@ -46,7 +42,6 @@
       }
     ],
     
-    // Konfigurasi Giscus
     giscus: {
       repo: "Aldi451/Biodata-akun",
       repoId: "R_kgDORc6sAA",
@@ -61,44 +56,26 @@
       lang: "id"
     },
     
-    // ===== TELEGRAM BOT CONFIGURATION =====
     telegram: {
-      // Bot token dari @BotFather
       botToken: "7065072791:AAE2MV1D0yBVJmOETL8Q0k5ZPpWcCHy_GEA",
-      
-      // Chat ID numerik (dari @userinfobot atau getUpdates)
       chatId: "6888495331",
-      
-      // Enable/disable tracking
       enabled: true,
-      
-      // Track visit on page load
       trackVisits: true,
-      
-      // Track button clicks
       trackClicks: true,
-      
-      // Send notification to Telegram
       sendNotification: true,
-      
-      // Debounce time for API calls (ms)
-      apiDebounce: 1000,
-      
-      // Debug mode - tampilkan log detail
       debug: true
     },
     
-    // Animasi
     animations: {
       typewriterSpeed: 100,
-      bubbleInterval: 600,
+      bubbleInterval: 800,
       bubbleLifetime: 13000,
-      confettiCount: 25,
-      confettiDuration: 3000
+      confettiCount: 20,
+      confettiDuration: 2500
     }
   };
 
-  // ===== STATE MANAGEMENT =====
+  // ===== STATE =====
   const state = {
     theme: 'light',
     commentsVisible: false,
@@ -110,10 +87,9 @@
     telegramTested: false
   };
 
-  // ===== DOM ELEMENTS CACHE =====
   let elements = {};
 
-  // ===== INITIALIZATION =====
+  // ===== INIT =====
   function init() {
     cacheElements();
     loadTheme();
@@ -123,11 +99,10 @@
     startAnimations();
     loadGiscus();
     
-    // Test Telegram connection after short delay
     setTimeout(testTelegramConnection, 2000);
     
     state.initialized = true;
-    log('✅ Profile page initialized with tracking');
+    log('✅ Profile page initialized');
   }
 
   function cacheElements() {
@@ -140,70 +115,47 @@
       commentsSection: document.getElementById('commentsSection'),
       giscusContainer: document.getElementById('giscus-container'),
       year: document.getElementById('year'),
-      profileImage: document.getElementById('profileImage'),
       visitCount: document.getElementById('visitCount'),
       trackingStatus: document.getElementById('trackingStatus'),
-      adminLink: document.getElementById('adminLink')
+      toast: document.getElementById('toast')
     };
   }
 
-  // ===== LOGGING HELPER =====
+  // ===== LOGGING =====
   function log(message, level = 'info') {
     if (!CONFIG.telegram.debug) return;
-    
-    const prefix = {
-      info: 'ℹ️',
-      warn: '⚠️',
-      error: '❌',
-      success: '✅'
-    };
-    
-    console.log(`${prefix[level] || 'ℹ️'} [Tracking] ${message}`);
+    const prefix = { info: 'ℹ️', warn: '⚠️', error: '❌', success: '✅' };
+    console.log(`${prefix[level]} [Tracking] ${message}`);
   }
 
-  // ===== TRACKING SYSTEM =====
+  // ===== TRACKING =====
   function initializeTracking() {
-    log('Initializing tracking system...');
-    
-    // Cek apakah tracking diaktifkan
     if (!CONFIG.telegram.enabled) {
-      log('Tracking disabled in config', 'warn');
       updateTrackingStatus(false);
       return;
     }
     
-    // Validasi konfigurasi Telegram
-    if (!CONFIG.telegram.botToken || !CONFIG.telegram.chatId ||
-        CONFIG.telegram.botToken.includes('YOUR_BOT_TOKEN') || 
-        CONFIG.telegram.chatId.includes('YOUR_CHAT_ID')) {
-      log('Telegram bot not configured. Using local storage only.', 'warn');
+    if (!CONFIG.telegram.botToken || CONFIG.telegram.botToken.includes('YOUR_BOT_TOKEN')) {
       updateTrackingStatus(false, 'local');
       state.trackingEnabled = 'local';
       return;
     }
     
-    // Validasi Chat ID harus numerik
     if (!/^\d+$/.test(CONFIG.telegram.chatId)) {
-      log(`Invalid Chat ID format: "${CONFIG.telegram.chatId}". Must be numeric!`, 'error');
       updateTrackingStatus(false, 'invalid');
       state.trackingEnabled = false;
-      showToast('⚠️ Chat ID harus berupa angka!', 'warning');
+      showToast('⚠️ Chat ID harus angka!', 'warning');
       return;
     }
     
     state.trackingEnabled = true;
     updateTrackingStatus(true);
-    log('Telegram tracking enabled ✓');
-    
-    // Load existing data
     loadTrackingData();
     
-    // Track page visit
     if (CONFIG.telegram.trackVisits) {
       trackVisit();
     }
     
-    // Initialize click counts
     CONFIG.socialLinks.forEach(link => {
       if (!state.clickCounts[link.platform]) {
         state.clickCounts[link.platform] = 0;
@@ -211,58 +163,18 @@
     });
   }
 
-  // ===== TELEGRAM CONNECTION TEST =====
-  async function testTelegramConnection() {
-    if (state.telegramTested || !state.trackingEnabled) return;
-    
-    state.telegramTested = true;
-    
-    const { botToken, chatId } = CONFIG.telegram;
-    
-    try {
-      // Test dengan getMe untuk verifikasi token
-      const testUrl = `https://api.telegram.org/bot${botToken}/getMe`;
-      const response = await fetch(testUrl);
-      const result = await response.json();
-      
-      if (result.ok) {
-        log(`Bot verified: @${result.result.username}`, 'success');
-        
-        // Test send message
-        await sendTelegramNotification('test', {
-          message: '🔔 *Testing Connection*\n\nBot tracking Anda berhasil terhubung!'
-        });
-      } else {
-        log(`Bot test failed: ${result.description}`, 'error');
-        showToast('❌ Bot token tidak valid', 'error');
-      }
-    } catch (error) {
-      log(`Connection test error: ${error.message}`, 'error');
-      
-      // Cek kemungkinan CORS issue
-      if (error.message.includes('Failed to fetch')) {
-        log('💡 Kemungkinan CORS issue. Telegram API mungkin memblokir request dari browser.', 'warn');
-        log('💡 Solusi: Gunakan backend proxy atau hosting dengan CORS enabled.', 'warn');
-      }
-      
-      showToast('⚠️ Gagal koneksi ke Telegram', 'warning');
-    }
-  }
-
   function loadTrackingData() {
-    const savedData = localStorage.getItem('profileTracking');
-    if (savedData) {
+    const saved = localStorage.getItem('profileTracking');
+    if (saved) {
       try {
-        const data = JSON.parse(savedData);
+        const data = JSON.parse(saved);
         state.visitCount = data.visits || 0;
         state.clickCounts = data.clicks || {};
         state.lastVisitTime = data.lastVisit || null;
-        log(`Loaded tracking  ${state.visitCount} visits`, 'info');
       } catch (e) {
-        log(`Error loading tracking data: ${e.message}`, 'error');
+        log(`Error loading data: ${e.message}`, 'error');
       }
     }
-    
     updateVisitCounter();
   }
 
@@ -276,7 +188,6 @@
     
     localStorage.setItem('profileTracking', JSON.stringify(data));
     
-    // Sync to Telegram if enabled
     if (state.trackingEnabled === true) {
       syncToTelegram(data);
     }
@@ -285,27 +196,24 @@
   function trackVisit() {
     const now = Date.now();
     const lastVisit = state.lastVisitTime;
-    // Session timeout: 30 minutes
     const isNewSession = !lastVisit || (now - lastVisit > 30 * 60 * 1000);
     
     if (isNewSession) {
       state.visitCount++;
       state.lastVisitTime = now;
-      
       updateVisitCounter();
       saveTrackingData();
       
-      if (CONFIG.telegram.sendNotification && state.trackingEnabled === true) {
+      if (CONFIG.telegram.sendNotification && state.trackingEnabled) {
         sendTelegramNotification('visit', {
           count: state.visitCount,
           timestamp: now,
           url: window.location.href,
-          userAgent: navigator.userAgent,
           referrer: document.referrer || 'direct'
         });
       }
       
-      log(`👁️ New visit tracked: #${state.visitCount}`);
+      log(`👁️ New visit: #${state.visitCount}`);
     }
   }
 
@@ -320,16 +228,16 @@
     updateClickBadge(platform);
     saveTrackingData();
     
-    if (CONFIG.telegram.sendNotification && state.trackingEnabled === true) {
+    if (CONFIG.telegram.sendNotification && state.trackingEnabled) {
       sendTelegramNotification('click', {
-        platform: platform,
+        platform,
         count: state.clickCounts[platform],
         timestamp: Date.now(),
         url: window.location.href
       });
     }
     
-    log(`🖱️ Click tracked: ${platform} (${state.clickCounts[platform]})`);
+    log(`🖱️ Click: ${platform} (${state.clickCounts[platform]})`);
   }
 
   function updateVisitCounter() {
@@ -345,7 +253,7 @@
       return;
     }
     
-    const increment = Math.ceil((target - current) / 20);
+    const increment = Math.ceil((target - current) / 10);
     element.textContent = current + increment;
     
     if (current + increment < target) {
@@ -370,8 +278,6 @@
     }
     
     badge.textContent = count;
-    
-    // Trigger reflow for animation
     badge.style.animation = 'none';
     void badge.offsetHeight;
     badge.style.animation = 'popIn 0.3s ease';
@@ -381,124 +287,87 @@
     if (!elements.trackingStatus) return;
     
     if (enabled === true) {
-      elements.trackingStatus.textContent = '🟢 Telegram Active';
-      elements.trackingStatus.style.color = 'var(--success-color, #4CAF50)';
-      elements.trackingStatus.style.background = 'rgba(76, 175, 80, 0.2)';
+      elements.trackingStatus.textContent = '🟢 Active';
+      elements.trackingStatus.style.background = 'rgba(72, 187, 120, 0.2)';
+      elements.trackingStatus.style.color = 'var(--success-color)';
     } else if (type === 'local') {
-      elements.trackingStatus.textContent = '🟡 Local Only';
-      elements.trackingStatus.style.color = 'var(--warning-color, #ff9800)';
-      elements.trackingStatus.style.background = 'rgba(255, 152, 0, 0.2)';
-    } else if (type === 'invalid') {
-      elements.trackingStatus.textContent = '🔴 Invalid Config';
-      elements.trackingStatus.style.color = 'var(--danger-color, #f44336)';
-      elements.trackingStatus.style.background = 'rgba(244, 67, 54, 0.2)';
+      elements.trackingStatus.textContent = '🟡 Local';
+      elements.trackingStatus.style.background = 'rgba(237, 137, 54, 0.2)';
+      elements.trackingStatus.style.color = 'var(--warning-color)';
     } else {
-      elements.trackingStatus.textContent = '🔴 Disabled';
-      elements.trackingStatus.style.color = 'var(--danger-color, #f44336)';
-      elements.trackingStatus.style.background = 'rgba(244, 67, 54, 0.2)';
+      elements.trackingStatus.textContent = '🔴 Off';
+      elements.trackingStatus.style.background = 'rgba(245, 101, 101, 0.2)';
+      elements.trackingStatus.style.color = 'var(--danger-color)';
     }
   }
 
-  // ===== TELEGRAM API =====
+  // ===== TELEGRAM =====
+  async function testTelegramConnection() {
+    if (state.telegramTested || !state.trackingEnabled) return;
+    state.telegramTested = true;
+    
+    try {
+      const url = `https://api.telegram.org/bot${CONFIG.telegram.botToken}/getMe`;
+      const response = await fetch(url);
+      const result = await response.json();
+      
+      if (result.ok) {
+        log(`Bot verified: @${result.result.username}`, 'success');
+        await sendTelegramNotification('test', {
+          message: '🔔 *Testing Connection*\n\nBot tracking berhasil terhubung!'
+        });
+      } else {
+        log(`Bot test failed: ${result.description}`, 'error');
+      }
+    } catch (error) {
+      log(`Connection error: ${error.message}`, 'error');
+    }
+  }
+
   async function sendTelegramNotification(type, data) {
     const { botToken, chatId } = CONFIG.telegram;
+    if (!botToken || !chatId) return;
     
-    if (!botToken || !chatId) {
-      log('Missing bot token or chat ID', 'error');
-      return;
-    }
-    
-    // Build message based on type
     let message = '';
     
     if (type === 'test') {
       message = data.message;
     } else if (type === 'visit') {
-      message = `👁️ *New Website Visit*
-
-📊 Total Visits: *${data.count}*
-🔗 URL: \`${data.url}\`
-📱 Device: ${getDeviceType()}
-🌐 Referrer: ${data.referrer}
-⏰ Time: ${new Date(data.timestamp).toLocaleString('id-ID')}`;
+      message = `👁️ *New Visit*\n\n📊 Total: *${data.count}*\n🔗 \`${data.url}\`\n🌐 ${data.referrer}\n⏰ ${new Date(data.timestamp).toLocaleString('id-ID')}`;
     } else if (type === 'click') {
-      message = `🖱️ *Button Click*
-
-🔘 Platform: *${data.platform}*
-📊 Total Clicks: *${data.count}*
-🔗 URL: \`${data.url}\`
-⏰ Time: ${new Date(data.timestamp).toLocaleString('id-ID')}`;
+      message = `🖱️ *Button Click*\n\n🔘 ${data.platform}\n📊 Total: *${data.count}*\n⏰ ${new Date(data.timestamp).toLocaleString('id-ID')}`;
     }
     
     if (!message) return;
     
     try {
-      // ✅ URL TANPA SPASI - ini perbaikan utama!
       const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
       
-      log(`Sending to Telegram: ${type}`);
-      
-      const response = await fetch(url, {
+      await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: chatId,  // Chat ID sebagai string angka
+          chat_id: chatId,
           text: message,
           parse_mode: 'Markdown',
           disable_web_page_preview: true
         })
       });
       
-      const result = await response.json();
-      
-      if (result.ok) {
-        log('✅ Telegram notification sent successfully', 'success');
-      } else {
-        log(`❌ Telegram API error: ${result.description || JSON.stringify(result)}`, 'error');
-        showToast(`❌ Gagal: ${result.description || 'Unknown error'}`, 'error');
-      }
-      
-      return result;
-      
+      log('✅ Telegram sent', 'success');
     } catch (error) {
-      log(`❌ Error sending Telegram notification: ${error.message}`, 'error');
-      
-      // Debug CORS issues
-      if (error.message.includes('Failed to fetch') || error.name === 'TypeError') {
-        log('💡 Possible CORS issue. Try:');
-        log('   1. Use HTTPS hosting (not file://)');
-        log('   2. Add backend proxy for Telegram API');
-        log('   3. Check if adblocker is blocking the request');
-      }
-      
-      showToast('⚠️ Offline mode - data saved locally', 'warning');
-      
-      // Return error for debugging
-      return { ok: false, error: error.message };
+      log(`Error: ${error.message}`, 'error');
     }
   }
 
   async function syncToTelegram(data) {
     const { botToken, chatId } = CONFIG.telegram;
-    
     if (!botToken || !chatId) return;
     
-    const message = `📊 *Stats Sync*
-
-👁️ Total Visits: *${data.visits}*
-🖱️ Clicks:
-${Object.entries(data.clicks).map(([platform, count]) => 
-  `   • ${platform}: *${count}*`
-).join('\n')}
-
-⏰ Updated: ${new Date(data.lastUpdated).toLocaleString('id-ID')}`;
+    const message = `📊 *Stats*\n\n👁️ Visits: *${data.visits}*\n${Object.entries(data.clicks).map(([p, c]) => `• ${p}: *${c}*`).join('\n')}`;
     
     try {
-      // ✅ URL TANPA SPASI
       const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-      
       await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -513,14 +382,7 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
     }
   }
 
-  function getDeviceType() {
-    const ua = navigator.userAgent || '';
-    if (/tablet|ipad|playbook|silk/i.test(ua)) return '📱 Tablet';
-    if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated/i.test(ua)) return '📱 Mobile';
-    return '💻 Desktop';
-  }
-
-  // ===== THEME MANAGEMENT =====
+  // ===== THEME =====
   function loadTheme() {
     const saved = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -542,7 +404,6 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
 
   function updateGiscusTheme(theme) {
     const giscusTheme = theme === 'dark' ? 'noborder_dark' : 'noborder_light';
-    
     const giscusScript = document.querySelector('script[src*="giscus.app"]');
     if (giscusScript) {
       giscusScript.setAttribute('data-theme', giscusTheme);
@@ -550,18 +411,18 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
     
     const iframe = document.querySelector('.giscus-frame iframe');
     if (iframe) {
-      // ✅ URL TANPA SPASI
       iframe.contentWindow.postMessage({
         giscus: { setConfig: { theme: giscusTheme } }
       }, 'https://giscus.app');
     }
   }
 
-  // ===== CONTENT RENDERING =====
+  // ===== RENDER =====
   function renderContent() {
     if (elements.year) {
       elements.year.textContent = new Date().getFullYear();
     }
+    
     renderSkills();
     renderSocialButtons();
     startTypewriter();
@@ -571,12 +432,12 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
     if (!elements.skillsContainer) return;
     
     elements.skillsContainer.innerHTML = '';
-    
     CONFIG.profile.skills.forEach((skill, index) => {
       const tag = document.createElement('span');
       tag.className = 'skill-tag';
       tag.textContent = skill;
       tag.style.animationDelay = `${0.1 + index * 0.1}s`;
+      tag.setAttribute('role', 'listitem');
       elements.skillsContainer.appendChild(tag);
     });
   }
@@ -620,7 +481,6 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
     });
   }
 
-  // ===== TYPEWRITER EFFECT =====
   function startTypewriter() {
     if (!elements.typewriter) return;
     
@@ -638,21 +498,17 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
     setTimeout(type, 500);
   }
 
-  // ===== LINK HANDLER =====
   function openLink(url) {
     if (!url || typeof url !== 'string') return;
-    
     const cleanUrl = url.trim();
     if (!cleanUrl.startsWith('http')) return;
     
     createConfetti(window.innerWidth / 2, 150);
-    
     setTimeout(() => {
       window.open(cleanUrl, '_blank', 'noopener,noreferrer');
     }, 200);
   }
 
-  // ===== COMMENTS TOGGLE =====
   function toggleComments() {
     if (!elements.commentsSection) return;
     
@@ -665,13 +521,11 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
     }
   }
 
-  // ===== GISCUS LOADER =====
   function loadGiscus() {
     if (!elements.giscusContainer) return;
     if (elements.giscusContainer.querySelector('script')) return;
     
     const script = document.createElement('script');
-    // ✅ URL TANPA SPASI
     script.src = 'https://giscus.app/client.js';
     script.async = true;
     script.crossOrigin = 'anonymous';
@@ -681,5 +535,155 @@ ${Object.entries(data.clicks).map(([platform, count]) =>
     });
     
     script.setAttribute('data-theme', state.theme === 'dark' ? 'noborder_dark' : 'noborder_light');
+    elements.giscusContainer.appendChild(script);
+  }
+
+  // ===== ANIMATIONS =====
+  function createBubble() {
+    const bubble = document.createElement('div');
+    const size = Math.random() * 40 + 15;
     
-    elements.giscus
+    bubble.className = 'bubble';
+    bubble.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}vw;
+      top: 100vh;
+    `;
+    
+    document.body.appendChild(bubble);
+    setTimeout(() => bubble.parentNode?.removeChild(bubble), CONFIG.animations.bubbleLifetime);
+  }
+
+  function createConfetti(x, y) {
+    const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#ffd93d'];
+    
+    for (let i = 0; i < CONFIG.animations.confettiCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      
+      const size = Math.random() * 6 + 3;
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      const shape = Math.random() > 0.5 ? '50%' : '3px';
+      const delay = Math.random() * 0.3;
+      const duration = Math.random() * 2 + 2;
+      const angle = Math.random() * 60 - 30;
+      const velocityX = Math.random() * 200 - 100;
+      
+      confetti.style.cssText = `
+        position: fixed;
+        left: ${x}px;
+        top: ${y}px;
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        border-radius: ${shape};
+        animation-delay: ${delay}s;
+        animation-duration: ${duration}s;
+        --velocity-x: ${velocityX}px;
+        transform: rotate(${angle}deg);
+        pointer-events: none;
+        z-index: 9999;
+        animation: fall ${duration}s linear ${delay}s forwards;
+      `;
+      
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.parentNode?.removeChild(confetti), (duration + delay) * 1000);
+    }
+  }
+
+  function injectConfettiKeyframes() {
+    if (document.getElementById('confetti-keyframes')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'confetti-keyframes';
+    style.textContent = `
+      @keyframes fall {
+        0% {
+          transform: translateY(0) rotate(0deg) translateX(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg) translateX(var(--velocity-x, 0));
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function startAnimations() {
+    injectConfettiKeyframes();
+    setInterval(createBubble, CONFIG.animations.bubbleInterval);
+    
+    for (let i = 0; i < 3; i++) {
+      setTimeout(createBubble, i * 300);
+    }
+  }
+
+  // ===== TOAST =====
+  function showToast(message, type = 'info') {
+    if (!elements.toast) return;
+    
+    elements.toast.className = `toast ${type}`;
+    elements.toast.textContent = message;
+    elements.toast.classList.add('show');
+    
+    setTimeout(() => elements.toast.classList.remove('show'), 3000);
+  }
+
+  // ===== EVENT LISTENERS =====
+  function setupEventListeners() {
+    if (elements.themeToggle) {
+      elements.themeToggle.addEventListener('click', toggleTheme);
+      elements.themeToggle.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          toggleTheme();
+        }
+      });
+    }
+    
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!localStorage.getItem('theme')) {
+        state.theme = e.matches ? 'dark' : 'light';
+        applyTheme(state.theme);
+      }
+    });
+    
+    window.addEventListener('message', (event) => {
+      if (event.origin !== 'https://giscus.app') return;
+      if (event.data?.giscus?.resizeHeight && elements.commentsSection) {
+        elements.commentsSection.style.minHeight = `${event.data.giscus.resizeHeight}px`;
+      }
+    });
+    
+    window.addEventListener('beforeunload', () => {
+      saveTrackingData();
+    });
+    
+    // Prevent zoom on double tap (mobile)
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+  }
+
+  // ===== PUBLIC API =====
+  window.openLink = openLink;
+  window.toggleComments = toggleComments;
+  window.toggleTheme = toggleTheme;
+  window.getTrackingData = () => ({
+    visits: state.visitCount,
+    clicks: state.clickCounts,
+    lastVisit: state.lastVisitTime
+  });
+  window.testTelegram = () => testTelegramConnection();
+
+  // ===== START =====
+  if (document.readyState === 'loading') {
+    document.addE
