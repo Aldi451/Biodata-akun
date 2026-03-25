@@ -1,7 +1,7 @@
 /* ========================================
-   PROFILE PAGE - FINAL VERSION
+   PROFILE PAGE - FINAL MOBILE OPTIMIZED
    Rifaldi Hidayat - Personal Portfolio
-   ======================================== */ 
+   ======================================== */
 
 /* ===== CSS VARIABLES ===== */
 :root {
@@ -16,12 +16,14 @@
   --success-color: #48bb78;
   --warning-color: #ed8936;
   --danger-color: #f56565;
+  --telegram-color: #0088cc;
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.1);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.15);
   --shadow-lg: 0 8px 32px rgba(0,0,0,0.2);
   --radius-sm: 8px;
   --radius-md: 16px;
   --radius-lg: 24px;
+  --radius-xl: 32px;
 }
 
 [data-theme="dark"] {
@@ -86,6 +88,42 @@ body {
     transform: translateY(-120vh) scale(0.3);
     opacity: 0;
   }
+}
+
+/* ===== VISITOR COUNTER ===== */
+.visitor-counter {
+  position: fixed;
+  top: calc(env(safe-area-inset-top) + 12px);
+  left: 12px;
+  background: var(--card-bg);
+  padding: 8px 14px;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid var(--btn-hover);
+  transition: transform 0.2s ease;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.visitor-counter:active {
+  transform: scale(0.95);
+}
+
+.counter-icon {
+  font-size: 1rem;
+}
+
+.counter-value {
+  color: var(--btn-hover);
+  font-weight: 700;
+  min-width: 24px;
+  text-align: center;
 }
 
 /* ===== THEME TOGGLE ===== */
@@ -430,6 +468,17 @@ body {
   flex: 1;
 }
 
+.click-badge {
+  background: var(--telegram-color);
+  color: white;
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 700;
+  margin-left: 8px;
+  animation: popIn 0.3s ease;
+}
+
 /* ===== COMMENTS SECTION ===== */
 .comments-section {
   margin-top: 24px;
@@ -459,6 +508,44 @@ body {
   margin-top: 10px;
 }
 
+/* ===== ADMIN NAV ===== */
+.admin-nav {
+  text-align: center;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.admin-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--telegram-color);
+  text-decoration: none;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 50px;
+  background: rgba(0, 136, 204, 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.admin-link:active {
+  transform: scale(0.95);
+}
+
+.admin-link:hover,
+.admin-link:focus {
+  background: var(--telegram-color);
+  color: white;
+  border-color: var(--telegram-color);
+}
+
+.admin-icon {
+  font-size: 1.25rem;
+}
+
 /* ===== FOOTER ===== */
 .footer {
   text-align: center;
@@ -482,6 +569,16 @@ body {
   25% { transform: scale(1.1); }
   50% { transform: scale(1); }
   75% { transform: scale(1.1); }
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 10px;
+  background: rgba(72, 187, 120, 0.2);
+  color: var(--success-color);
+  font-weight: 600;
+  font-size: 0.75rem;
 }
 
 @keyframes fadeIn {
@@ -535,6 +632,8 @@ body {
 }
 
 /* ===== RESPONSIVE BREAKPOINTS ===== */
+
+/* Small phones (320px - 375px) */
 @media (max-width: 375px) {
   html {
     font-size: 14px;
@@ -551,6 +650,7 @@ body {
     height: 100px;
   }
   
+  .visitor-counter,
   .theme-toggle {
     top: calc(env(safe-area-inset-top) + 8px);
     padding: 6px 12px;
@@ -574,6 +674,7 @@ body {
   }
 }
 
+/* Medium phones (376px - 425px) */
 @media (min-width: 376px) and (max-width: 425px) {
   .profile-container {
     margin: 75px 12px 16px;
@@ -581,6 +682,7 @@ body {
   }
 }
 
+/* Large phones (426px - 480px) */
 @media (min-width: 426px) and (max-width: 480px) {
   .profile-container {
     margin: 80px 16px 20px;
@@ -588,6 +690,7 @@ body {
   }
 }
 
+/* Tablets (481px - 768px) */
 @media (min-width: 481px) and (max-width: 768px) {
   .profile-container {
     max-width: 600px;
@@ -609,6 +712,7 @@ body {
   }
 }
 
+/* Landscape mode */
 @media (max-height: 500px) and (orientation: landscape) {
   .profile-container {
     margin: 70px 16px 16px;
@@ -634,6 +738,7 @@ body {
   }
 }
 
+/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -642,12 +747,15 @@ body {
   }
 }
 
+/* Focus visible for keyboard navigation */
 .social-btn:focus-visible,
-.theme-toggle:focus-visible {
+.theme-toggle:focus-visible,
+.admin-link:focus-visible {
   outline: 3px solid var(--btn-hover);
   outline-offset: 2px;
 }
 
+/* Print styles */
 @media print {
   body {
     background: white;
@@ -655,7 +763,9 @@ body {
   }
   
   .theme-toggle,
-  .bubble {
+  .visitor-counter,
+  .bubble,
+  .admin-nav {
     display: none !important;
   }
   
