@@ -1,19 +1,22 @@
 /**
- * PROFILE PAGE - FINAL VERSION (FIXED)
+ * PROFILE PAGE - SCRIPT.JS
  * Rifaldi Hidayat - Personal Portfolio
+ * Fitur: Theme Toggle, Typewriter, Bubbles, Confetti, Dynamic Content
  */
 
 (function() {
   'use strict';
 
-  // ===== KONFIGURASI =====
+  // ===== KONFIGURASI GLOBAL =====
   const CONFIG = {
+    // Data profil
     profile: {
       name: "Rifaldi Hidayat",
       bio: "👋 Halo! Saya pengembang web yang suka membuat pengalaman digital yang menarik dan interaktif.",
       skills: ["HTML5", "CSS3", "JavaScript", "React", "Node.js"]
     },
     
+    // Data media sosial
     socialLinks: [
       {
         platform: "facebook",
@@ -41,6 +44,7 @@
       }
     ],
     
+    // Konfigurasi Giscus
     giscus: {
       repo: "Aldi451/Biodata-akun",
       repoId: "R_kgDORc6sAA",
@@ -55,53 +59,37 @@
       lang: "id"
     },
     
-    telegram: {
-      botToken: "7065072791:AAE2MV1D0yBVJmOETL8Q0k5ZPpWcCHy_GEA",
-      chatId: "6888495331",
-      enabled: true,
-      trackVisits: true,
-      trackClicks: true,
-      sendNotification: true,
-      debug: true
-    },
-    
+    // Animasi
     animations: {
       typewriterSpeed: 100,
-      bubbleInterval: 800,
+      bubbleInterval: 600,
       bubbleLifetime: 13000,
-      confettiCount: 20,
-      confettiDuration: 2500
+      confettiCount: 25,
+      confettiDuration: 3000
     }
   };
 
-  // ===== STATE =====
+  // ===== STATE MANAGEMENT =====
   const state = {
     theme: 'light',
     commentsVisible: false,
-    initialized: false,
-    visitCount: 0,
-    clickCounts: {},
-    lastVisitTime: null,
-    trackingEnabled: false,
-    telegramTested: false
+    initialized: false
   };
 
+  // ===== DOM ELEMENTS CACHE =====
   let elements = {};
 
-  // ===== INIT =====
+  // ===== INITIALIZATION =====
   function init() {
     cacheElements();
     loadTheme();
-    initializeTracking();
     renderContent();
     setupEventListeners();
     startAnimations();
     loadGiscus();
     
-    setTimeout(testTelegramConnection, 2000);
-    
     state.initialized = true;
-    log('✅ Profile page initialized');
+    console.log('✅ Profile page initialized');
   }
 
   function cacheElements() {
@@ -114,282 +102,11 @@
       commentsSection: document.getElementById('commentsSection'),
       giscusContainer: document.getElementById('giscus-container'),
       year: document.getElementById('year'),
-      visitCount: document.getElementById('visitCount'),
-      trackingStatus: document.getElementById('trackingStatus'),
-      toast: document.getElementById('toast')
+      profileImage: document.getElementById('profileImage')
     };
   }
 
-  // ===== LOGGING =====
-  function log(message, level = 'info') {
-    if (!CONFIG.telegram.debug) return;
-    const prefix = { info: 'ℹ️', warn: '⚠️', error: '❌', success: '✅' };
-    console.log(prefix[level] + ' [Tracking] ' + message);
-  }
-
-  // ===== TRACKING =====
-  function initializeTracking() {
-    if (!CONFIG.telegram.enabled) {
-      updateTrackingStatus(false);
-      return;
-    }
-    
-    if (!CONFIG.telegram.botToken || CONFIG.telegram.botToken.includes('YOUR_BOT_TOKEN')) {
-      updateTrackingStatus(false, 'local');
-      state.trackingEnabled = 'local';
-      return;
-    }
-    
-    if (!/^\d+$/.test(CONFIG.telegram.chatId)) {
-      updateTrackingStatus(false, 'invalid');
-      state.trackingEnabled = false;
-      showToast('⚠️ Chat ID harus angka!', 'warning');
-      return;
-    }
-    
-    state.trackingEnabled = true;
-    updateTrackingStatus(true);
-    loadTrackingData();
-    
-    if (CONFIG.telegram.trackVisits) {
-      trackVisit();
-    }
-    
-    CONFIG.socialLinks.forEach(function(link) {
-      if (!state.clickCounts[link.platform]) {
-        state.clickCounts[link.platform] = 0;
-      }
-    });
-  }
-
-  function loadTrackingData() {
-    const saved = localStorage.getItem('profileTracking');
-    if (saved) {
-      try {
-        const data = JSON.parse(saved);
-        state.visitCount = data.visits || 0;
-        state.clickCounts = data.clicks || {};
-        state.lastVisitTime = data.lastVisit || null;
-      } catch (e) {
-        log('Error loading  ' + e.message, 'error');
-      }
-    }
-    updateVisitCounter();
-  }
-
-  function saveTrackingData() {
-    const data = {
-      visits: state.visitCount,
-      clicks: state.clickCounts,
-      lastVisit: state.lastVisitTime,
-      lastUpdated: new Date().toISOString()
-    };
-    
-    localStorage.setItem('profileTracking', JSON.stringify(data));
-    
-    if (state.trackingEnabled === true) {
-      syncToTelegram(data);
-    }
-  }
-
-  function trackVisit() {
-    const now = Date.now();
-    const lastVisit = state.lastVisitTime;
-    const isNewSession = !lastVisit || (now - lastVisit > 30 * 60 * 1000);
-    
-    if (isNewSession) {
-      state.visitCount++;
-      state.lastVisitTime = now;
-      updateVisitCounter();
-      saveTrackingData();
-      
-      if (CONFIG.telegram.sendNotification && state.trackingEnabled) {
-        sendTelegramNotification('visit', {
-          count: state.visitCount,
-          timestamp: now,
-          url: window.location.href,
-          referrer: document.referrer || 'direct'
-        });
-      }
-      
-      log('👁️ New visit: #' + state.visitCount);
-    }
-  }
-
-  function trackClick(platform) {
-    if (!CONFIG.telegram.trackClicks) return;
-    
-    if (!state.clickCounts[platform]) {
-      state.clickCounts[platform] = 0;
-    }
-    state.clickCounts[platform]++;
-    
-    updateClickBadge(platform);
-    saveTrackingData();
-    
-    if (CONFIG.telegram.sendNotification && state.trackingEnabled) {
-      sendTelegramNotification('click', {
-        platform: platform,
-        count: state.clickCounts[platform],
-        timestamp: Date.now(),
-        url: window.location.href
-      });
-    }
-    
-    log('🖱️ Click: ' + platform + ' (' + state.clickCounts[platform] + ')');
-  }
-
-  function updateVisitCounter() {
-    if (elements.visitCount) {
-      animateCounter(elements.visitCount, state.visitCount);
-    }
-  }
-
-  function animateCounter(element, target) {
-    const current = parseInt(element.textContent) || 0;
-    if (current >= target) {
-      element.textContent = target;
-      return;
-    }
-    
-    const increment = Math.ceil((target - current) / 10);
-    element.textContent = current + increment;
-    
-    if (current + increment < target) {
-      setTimeout(function() { animateCounter(element, target); }, 50);
-    } else {
-      element.textContent = target;
-    }
-  }
-
-  function updateClickBadge(platform) {
-    const btn = document.querySelector('.social-btn[data-platform="' + platform + '"]');
-    if (!btn) return;
-    
-    let badge = btn.querySelector('.click-badge');
-    const count = state.clickCounts[platform];
-    
-    if (!badge) {
-      badge = document.createElement('span');
-      badge.className = 'click-badge';
-      const labelSpan = btn.querySelector('span');
-      if (labelSpan) labelSpan.appendChild(badge);
-    }
-    
-    badge.textContent = count;
-    badge.style.animation = 'none';
-    void badge.offsetHeight;
-    badge.style.animation = 'popIn 0.3s ease';
-  }
-
-  function updateTrackingStatus(enabled, type) {
-    if (!elements.trackingStatus) return;
-    if (type === undefined) type = 'telegram';
-    
-    if (enabled === true) {
-      elements.trackingStatus.textContent = '🟢 Active';
-      elements.trackingStatus.style.background = 'rgba(72, 187, 120, 0.2)';
-      elements.trackingStatus.style.color = 'var(--success-color)';
-    } else if (type === 'local') {
-      elements.trackingStatus.textContent = '🟡 Local';
-      elements.trackingStatus.style.background = 'rgba(237, 137, 54, 0.2)';
-      elements.trackingStatus.style.color = 'var(--warning-color)';
-    } else {
-      elements.trackingStatus.textContent = '🔴 Off';
-      elements.trackingStatus.style.background = 'rgba(245, 101, 101, 0.2)';
-      elements.trackingStatus.style.color = 'var(--danger-color)';
-    }
-  }
-
-  // ===== TELEGRAM =====
-  async function testTelegramConnection() {
-    if (state.telegramTested || !state.trackingEnabled) return;
-    state.telegramTested = true;
-    
-    try {
-      const url = 'https://api.telegram.org/bot' + CONFIG.telegram.botToken + '/getMe';
-      const response = await fetch(url);
-      const result = await response.json();
-      
-      if (result.ok) {
-        log('Bot verified: @' + result.result.username, 'success');
-        await sendTelegramNotification('test', {
-          message: '🔔 *Testing Connection*\n\nBot tracking berhasil terhubung!'
-        });
-      } else {
-        log('Bot test failed: ' + result.description, 'error');
-      }
-    } catch (error) {
-      log('Connection error: ' + error.message, 'error');
-    }
-  }
-
-  async function sendTelegramNotification(type, data) {
-    const botToken = CONFIG.telegram.botToken;
-    const chatId = CONFIG.telegram.chatId;
-    if (!botToken || !chatId) return;
-    
-    let message = '';
-    
-    if (type === 'test') {
-      message = data.message;
-    } else if (type === 'visit') {
-      message = '👁️ *New Visit*\n\n📊 Total: *' + data.count + '*\n🔗 `' + data.url + '`\n🌐 ' + data.referrer + '\n⏰ ' + new Date(data.timestamp).toLocaleString('id-ID');
-    } else if (type === 'click') {
-      message = '🖱️ *Button Click*\n\n🔘 ' + data.platform + '\n📊 Total: *' + data.count + '*\n⏰ ' + new Date(data.timestamp).toLocaleString('id-ID');
-    }
-    
-    if (!message) return;
-    
-    try {
-      const url = 'https://api.telegram.org/bot' + botToken + '/sendMessage';
-      
-      await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: 'Markdown',
-          disable_web_page_preview: true
-        })
-      });
-      
-      log('✅ Telegram sent', 'success');
-    } catch (error) {
-      log('Error: ' + error.message, 'error');
-    }
-  }
-
-  async function syncToTelegram(data) {
-    const botToken = CONFIG.telegram.botToken;
-    const chatId = CONFIG.telegram.chatId;
-    if (!botToken || !chatId) return;
-    
-    let clicksText = '';
-    Object.entries(data.clicks).forEach(function(item) {
-      clicksText += '• ' + item[0] + ': *' + item[1] + '*\n';
-    });
-    
-    const message = '📊 *Stats*\n\n👁️ Visits: *' + data.visits + '*\n' + clicksText;
-    
-    try {
-      const url = 'https://api.telegram.org/bot' + botToken + '/sendMessage';
-      await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text: message,
-          parse_mode: 'Markdown'
-        })
-      });
-    } catch (error) {
-      log('Sync error: ' + error.message, 'error');
-    }
-  }
-
-  // ===== THEME =====
+  // ===== THEME MANAGEMENT =====
   function loadTheme() {
     const saved = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -406,32 +123,45 @@
     state.theme = state.theme === 'dark' ? 'light' : 'dark';
     localStorage.setItem('theme', state.theme);
     applyTheme(state.theme);
+    
+    // Feedback visual
     createConfetti(window.innerWidth / 2, 30);
   }
 
   function updateGiscusTheme(theme) {
     const giscusTheme = theme === 'dark' ? 'noborder_dark' : 'noborder_light';
+    
+    // Update attribute jika script sudah load
     const giscusScript = document.querySelector('script[src*="giscus.app"]');
     if (giscusScript) {
       giscusScript.setAttribute('data-theme', giscusTheme);
     }
     
+    // Post message ke iframe jika sudah ada
     const iframe = document.querySelector('.giscus-frame iframe');
     if (iframe) {
       iframe.contentWindow.postMessage({
-        giscus: { setConfig: { theme: giscusTheme } }
+        giscus: {
+          setConfig: { theme: giscusTheme }
+        }
       }, 'https://giscus.app');
     }
   }
 
-  // ===== RENDER =====
+  // ===== CONTENT RENDERING =====
   function renderContent() {
+    // Set tahun footer
     if (elements.year) {
       elements.year.textContent = new Date().getFullYear();
     }
     
+    // Render skill tags
     renderSkills();
+    
+    // Render social buttons
     renderSocialButtons();
+    
+    // Start typewriter
     startTypewriter();
   }
 
@@ -439,12 +169,12 @@
     if (!elements.skillsContainer) return;
     
     elements.skillsContainer.innerHTML = '';
-    CONFIG.profile.skills.forEach(function(skill, index) {
+    
+    CONFIG.profile.skills.forEach((skill, index) => {
       const tag = document.createElement('span');
       tag.className = 'skill-tag';
       tag.textContent = skill;
-      tag.style.animationDelay = (0.1 + index * 0.1) + 's';
-      tag.setAttribute('role', 'listitem');
+      tag.style.animationDelay = `${0.1 + index * 0.1}s`;
       elements.skillsContainer.appendChild(tag);
     });
   }
@@ -454,37 +184,42 @@
     
     elements.socialButtons.innerHTML = '';
     
-    CONFIG.socialLinks.forEach(function(item, index) {
+    CONFIG.socialLinks.forEach((item, index) => {
       const btn = document.createElement('div');
       btn.className = 'social-btn';
       btn.setAttribute('data-platform', item.platform);
       btn.setAttribute('role', 'button');
       btn.setAttribute('tabindex', '0');
-      btn.style.animationDelay = (0.1 + index * 0.1) + 's';
+      btn.style.animationDelay = `${0.1 + index * 0.1}s`;
       
-      btn.innerHTML = '<div class="icon-circle" aria-hidden="true">' + item.icon + '</div><span>' + item.label + '</span>';
+      btn.innerHTML = `
+        <div class="icon-circle" aria-hidden="true">${item.icon}</div>
+        <span>${item.label}</span>
+      `;
       
-      const handleClick = function() {
-        trackClick(item.platform);
-        if (item.action) {
-          if (window[item.action]) window[item.action]();
-        } else {
-          openLink(item.url);
-        }
-      };
-      
-      btn.addEventListener('click', handleClick);
-      btn.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleClick();
-        }
-      });
+      if (item.action) {
+        btn.addEventListener('click', () => window[item.action]());
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            window[item.action]();
+          }
+        });
+      } else {
+        btn.addEventListener('click', () => openLink(item.url));
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            openLink(item.url);
+          }
+        });
+      }
       
       elements.socialButtons.appendChild(btn);
     });
   }
 
+  // ===== TYPEWRITER EFFECT =====
   function startTypewriter() {
     if (!elements.typewriter) return;
     
@@ -499,20 +234,29 @@
       }
     }
     
+    // Delay sedikit sebelum mulai
     setTimeout(type, 500);
   }
 
+  // ===== LINK HANDLER =====
   function openLink(url) {
+    // Validasi URL
     if (!url || typeof url !== 'string') return;
+    
+    // Trim dan validasi protocol
     const cleanUrl = url.trim();
     if (!cleanUrl.startsWith('http')) return;
     
+    // Confetti feedback
     createConfetti(window.innerWidth / 2, 150);
-    setTimeout(function() {
+    
+    // Open dengan security best practices
+    setTimeout(() => {
       window.open(cleanUrl, '_blank', 'noopener,noreferrer');
     }, 200);
   }
 
+  // ===== COMMENTS TOGGLE =====
   function toggleComments() {
     if (!elements.commentsSection) return;
     
@@ -525,8 +269,11 @@
     }
   }
 
+  // ===== GISCUS LOADER =====
   function loadGiscus() {
     if (!elements.giscusContainer) return;
+    
+    // Cek apakah sudah loaded
     if (elements.giscusContainer.querySelector('script')) return;
     
     const script = document.createElement('script');
@@ -534,28 +281,41 @@
     script.async = true;
     script.crossOrigin = 'anonymous';
     
-    Object.entries(CONFIG.giscus).forEach(function(item) {
-      script.setAttribute('data-' + item[0], item[1]);
+    // Set semua atribut konfigurasi
+    Object.entries(CONFIG.giscus).forEach(([key, value]) => {
+      script.setAttribute(`data-${key}`, value);
     });
     
+    // Set theme berdasarkan state saat ini
     script.setAttribute('data-theme', state.theme === 'dark' ? 'noborder_dark' : 'noborder_light');
+    
     elements.giscusContainer.appendChild(script);
   }
 
-  // ===== ANIMATIONS =====
+  // ===== BUBBLE ANIMATION =====
   function createBubble() {
     const bubble = document.createElement('div');
-    const size = Math.random() * 40 + 15;
+    const size = Math.random() * 50 + 20;
     
     bubble.className = 'bubble';
-    bubble.style.cssText = 'width: ' + size + 'px; height: ' + size + 'px; left: ' + (Math.random() * 100) + 'vw; top: 100vh;';
+    bubble.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      left: ${Math.random() * 100}vw;
+      top: 100vh;
+    `;
     
     document.body.appendChild(bubble);
-    setTimeout(function() {
-      if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
+    
+    // Cleanup
+    setTimeout(() => {
+      if (bubble.parentNode) {
+        bubble.remove();
+      }
     }, CONFIG.animations.bubbleLifetime);
   }
 
+  // ===== CONFETTI EFFECT =====
   function createConfetti(x, y) {
     const colors = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#43e97b', '#ffd93d'];
     
@@ -563,60 +323,81 @@
       const confetti = document.createElement('div');
       confetti.className = 'confetti';
       
-      const size = Math.random() * 6 + 3;
+      // Random properties
+      const size = Math.random() * 8 + 4;
       const color = colors[Math.floor(Math.random() * colors.length)];
       const shape = Math.random() > 0.5 ? '50%' : '3px';
       const delay = Math.random() * 0.3;
-      const duration = Math.random() * 2 + 2;
+      const duration = (Math.random() * 2 + 2);
       const angle = Math.random() * 60 - 30;
       const velocityX = Math.random() * 200 - 100;
       
-      confetti.style.cssText = 'position: fixed; left: ' + x + 'px; top: ' + y + 'px; width: ' + size + 'px; height: ' + size + 'px; background: ' + color + '; border-radius: ' + shape + '; animation-delay: ' + delay + 's; animation-duration: ' + duration + 's; --velocity-x: ' + velocityX + 'px; transform: rotate(' + angle + 'deg); pointer-events: none; z-index: 9999; animation: fall ' + duration + 's linear ' + delay + 's forwards;';
+      confetti.style.cssText = `
+        left: ${x}px;
+        top: ${y}px;
+        width: ${size}px;
+        height: ${size}px;
+        background: ${color};
+        border-radius: ${shape};
+        animation-delay: ${delay}s;
+        animation-duration: ${duration}s;
+        --velocity-x: ${velocityX}px;
+        transform: rotate(${angle}deg);
+      `;
+      
+      // Custom animation dengan variasi
+      confetti.style.animationName = 'fall';
+      confetti.style.setProperty('--velocity-x', `${velocityX}px`);
       
       document.body.appendChild(confetti);
-      setTimeout(function() {
-        if (confetti.parentNode) confetti.parentNode.removeChild(confetti);
+      
+      // Cleanup
+      setTimeout(() => {
+        if (confetti.parentNode) {
+          confetti.remove();
+        }
       }, (duration + delay) * 1000);
     }
   }
 
+  // Tambahkan keyframes dinamis untuk confetti dengan horizontal movement
   function injectConfettiKeyframes() {
-    if (document.getElementById('confetti-keyframes')) return;
-    
     const style = document.createElement('style');
-    style.id = 'confetti-keyframes';
-    style.textContent = '@keyframes fall { 0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 1; } 100% { transform: translateY(100vh) rotate(720deg) translateX(var(--velocity-x, 0)); opacity: 0; } }';
+    style.textContent = `
+      @keyframes fall {
+        0% {
+          transform: translateY(0) rotate(0deg) translateX(0);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(720deg) translateX(var(--velocity-x, 0));
+          opacity: 0;
+        }
+      }
+    `;
     document.head.appendChild(style);
   }
 
+  // ===== ANIMATION STARTER =====
   function startAnimations() {
+    // Inject custom keyframes
     injectConfettiKeyframes();
+    
+    // Start bubble loop
     setInterval(createBubble, CONFIG.animations.bubbleInterval);
     
-    for (let i = 0; i < 3; i++) {
-      setTimeout(createBubble, i * 300);
+    // Create initial bubbles
+    for (let i = 0; i < 5; i++) {
+      setTimeout(createBubble, i * 200);
     }
-  }
-
-  // ===== TOAST =====
-  function showToast(message, type) {
-    if (!elements.toast) return;
-    if (type === undefined) type = 'info';
-    
-    elements.toast.className = 'toast ' + type;
-    elements.toast.textContent = message;
-    elements.toast.classList.add('show');
-    
-    setTimeout(function() {
-      elements.toast.classList.remove('show');
-    }, 3000);
   }
 
   // ===== EVENT LISTENERS =====
   function setupEventListeners() {
+    // Theme toggle click
     if (elements.themeToggle) {
       elements.themeToggle.addEventListener('click', toggleTheme);
-      elements.themeToggle.addEventListener('keydown', function(e) {
+      elements.themeToggle.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
           toggleTheme();
@@ -624,56 +405,53 @@
       });
     }
     
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+    // Listen for system theme changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       if (!localStorage.getItem('theme')) {
         state.theme = e.matches ? 'dark' : 'light';
         applyTheme(state.theme);
       }
     });
     
-    window.addEventListener('message', function(event) {
+    // Handle visibility change (pause animations when tab inactive)
+    document.addEventListener('visibilitychange', () => {
+      // Bisa ditambahkan logika pause animasi jika diperlukan
+    });
+    
+    // Handle Giscus resize messages
+    window.addEventListener('message', (event) => {
       if (event.origin !== 'https://giscus.app') return;
-      if (event.data && event.data.giscus && event.data.giscus.resizeHeight && elements.commentsSection) {
-        elements.commentsSection.style.minHeight = event.data.giscus.resizeHeight + 'px';
+      
+      if (event.data?.giscus?.resizeHeight && elements.commentsSection) {
+        elements.commentsSection.style.minHeight = `${event.data.giscus.resizeHeight}px`;
       }
     });
     
-    window.addEventListener('beforeunload', function() {
-      saveTrackingData();
-    });
-    
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function(e) {
-      const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
-        e.preventDefault();
+    // Keyboard navigation enhancement
+    document.addEventListener('keydown', (e) => {
+      // ESC untuk close comments (opsional)
+      if (e.key === 'Escape' && state.commentsVisible) {
+        // toggleComments(); // Uncomment jika ingin ESC menutup comments
       }
-      lastTouchEnd = now;
-    }, false);
+    });
   }
 
-  // ===== PUBLIC API =====
+  // ===== PUBLIC API (untuk akses global) =====
   window.openLink = openLink;
   window.toggleComments = toggleComments;
   window.toggleTheme = toggleTheme;
-  window.getTrackingData = function() {
-    return {
-      visits: state.visitCount,
-      clicks: state.clickCounts,
-      lastVisit: state.lastVisitTime
-    };
-  };
-  window.testTelegram = testTelegramConnection;
 
-  // ===== START =====
+  // ===== START APP =====
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
 
-  window.addEventListener('error', function(e) {
-    log('Global error: ' + e.message, 'error');
+  // Error handling global
+  window.addEventListener('error', (e) => {
+    console.error('Global error:', e.message);
+    // Jangan tampilkan error ke user untuk UX yang lebih baik
   });
 
 })();
