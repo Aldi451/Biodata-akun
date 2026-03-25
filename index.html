@@ -12,7 +12,7 @@
   
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://giscus.app">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
+  <link rel="icon" href="image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👤</text></svg>">
 </head>
 
 <body>
@@ -21,6 +21,12 @@
     <span class="sun">☀️</span>
     <span class="moon">🌙</span>
   </button>
+
+  <!-- Visitor Counter -->
+  <div class="visitor-counter" id="visitorCounter" title="Total pengunjung">
+    <span class="counter-icon">👁️</span>
+    <span class="counter-value" id="visitCount">0</span>
+  </div>
 
   <!-- Main Container -->
   <main class="profile-container">
@@ -65,11 +71,19 @@
       <div id="giscus-container"></div>
     </section>
 
+    <!-- Admin Link -->
+    <nav class="admin-nav">
+      <a href="admin.html" class="admin-link" target="_blank" rel="noopener">
+        <span class="admin-icon">📊</span>
+        <span>Admin Dashboard</span>
+      </a>
+    </nav>
+
   </main>
 
   <!-- Footer -->
   <footer class="footer">
-    <p>© <span id="year"></span> Rifaldi Hidayat • Made with <span class="heart">❤️</span></p>
+    <p>© <span id="year"></span> Rifaldi Hidayat • Made with <span class="heart">❤️</span> • <span id="trackingStatus" class="status-badge">🟢 Active</span></p>
   </footer>
 
   <!-- Toast Notification -->
