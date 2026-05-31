@@ -4,9 +4,7 @@
   // ===== KONFIGURASI GLOBAL =====
   const CONFIG = {
     profile: {
-      name: "Rifaldi Hidayat",
-      bio: "👋 Halo! Saya pengembang web yang suka membuat pengalaman digital yang menarik dan interaktif.",
-      skills: ["HTML5", "CSS3", "JavaScript", "React", "Node.js"]
+      name: "Rifaldi Hidayat"
     },
 
     socialLinks: [
@@ -81,7 +79,6 @@
       body: document.body,
       themeToggle: document.getElementById('themeToggle'),
       typewriter: document.getElementById('typewriter'),
-      skillsContainer: document.getElementById('skillsContainer'),
       socialButtons: document.getElementById('socialButtons'),
       commentsSection: document.getElementById('commentsSection'),
       giscusContainer: document.getElementById('giscus-container'),
@@ -126,21 +123,10 @@
   // ===== RENDER =====
   function renderContent() {
     elements.year.textContent = new Date().getFullYear();
-    renderSkills();
     renderSocialButtons();
     startTypewriter();
   }
 
-  function renderSkills() {
-    elements.skillsContainer.innerHTML = '';
-
-    CONFIG.profile.skills.forEach(skill => {
-      const tag = document.createElement('span');
-      tag.className = 'skill-tag';
-      tag.textContent = skill;
-      elements.skillsContainer.appendChild(tag);
-    });
-  }
 
   function renderSocialButtons() {
     elements.socialButtons.innerHTML = '';
