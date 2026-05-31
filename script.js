@@ -81,8 +81,7 @@
       typewriter: document.getElementById('typewriter'),
       socialButtons: document.getElementById('socialButtons'),
       commentsSection: document.getElementById('commentsSection'),
-      giscusContainer: document.getElementById('giscus-container'),
-      year: document.getElementById('year')
+      giscusContainer: document.getElementById('giscus-container')
     };
   }
 
@@ -122,7 +121,6 @@
 
   // ===== RENDER =====
   function renderContent() {
-    elements.year.textContent = new Date().getFullYear();
     renderSocialButtons();
     startTypewriter();
   }
